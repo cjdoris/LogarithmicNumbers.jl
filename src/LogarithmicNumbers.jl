@@ -1,11 +1,13 @@
 """
-Provides the [`Logarithmic`](@ref) type, which represents a positive real number by its logarithm, and the [`SLogarithmic`](@ref) type which is a signed version.
+A [logarithmic number system](https://en.wikipedia.org/wiki/ULogarithmic_number_system).
+
+Provides the signed [`Logarithmic`](@ref) and unsigned [`ULogarithmic`](@ref) types, which represent real numbers and positive real numbers respectively.
 """
 module LogarithmicNumbers
 
 using Requires, Random
 
-export Logarithmic, SLogarithmic
+export ULogarithmic, Logarithmic
 
 include("types.jl")
 include("constructors.jl")

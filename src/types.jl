@@ -1,28 +1,28 @@
 """
-    Logarithmic(x)
+    ULogarithmic(x)
 
 Represents the positive real number `x` by storing its logarithm.
 
 !!! tip
-    If you know `lx=log(x)` then use [`exp(Logarithmic, lx)`](@ref Base.exp(::Type{Logarithmic},::Real)) instead.
+    If you know `lx=log(x)` then use [`exp(ULogarithmic, lx)`](@ref Base.exp(::Type{ULogarithmic},::Real)) instead.
 """
-struct Logarithmic{T<:Real} <: Real
+struct ULogarithmic{T<:Real} <: Real
   log::T
-  Logarithmic{T}(::Val{:INNER}, x::T) where {T} = new(x)
+  ULogarithmic{T}(::Val{:INNER}, x::T) where {T} = new(x)
 end
 
 
 """
-    SLogarithmic(x)
+    Logarithmic(x)
 
-Represents the real number `x` by storing its absolute value as a `Logarithmic` and its sign bit.
+Represents the real number `x` by storing its absolute value as a `ULogarithmic` and its sign bit.
 
 !!! tip
-    If you know `lx=log(abs(x))` then use [`exp(SLogarithmic, lx, signbit)`](@ref Base.exp(::Type{SLogarithmic},::Real)) instead.
+    If you know `lx=log(abs(x))` then use [`exp(Logarithmic, lx, signbit)`](@ref Base.exp(::Type{Logarithmic},::Real)) instead.
 """
-struct SLogarithmic{T<:Real} <: Real
-  abs::Logarithmic{T}
+struct Logarithmic{T<:Real} <: Real
+  abs::ULogarithmic{T}
   signbit::Bool
-  SLogarithmic{T}(::Val{:INNER}, abs::Logarithmic{T}, signbit::Bool=false) where {T<:Real} = new(abs, signbit)
+  Logarithmic{T}(::Val{:INNER}, abs::ULogarithmic{T}, signbit::Bool=false) where {T<:Real} = new(abs, signbit)
 end
 

@@ -1,42 +1,42 @@
 # conversion
-Base.float(x::SLogarithmic) = (y=float(x.abs); ifelse(x.signbit, -y, y))
-Base.big(x::SLogarithmic) = SLogarithmic(big(x.abs), x.signbit)
-Base.unsigned(x::SLogarithmic) = (x.signbit && !iszero(x) && throw(DomainError(x)); x.abs)
-Base.signed(x::SLogarithmic) = x
+Base.float(x::Logarithmic) = (y=float(x.abs); ifelse(x.signbit, -y, y))
+Base.big(x::Logarithmic) = Logarithmic(big(x.abs), x.signbit)
+Base.unsigned(x::Logarithmic) = (x.signbit && !iszero(x) && throw(DomainError(x)); x.abs)
+Base.signed(x::Logarithmic) = x
 
 # type functions
-Base.widen(::Type{SLogarithmic{T}}) where {T} = SLogarithmic{widen(T)}
-Base.big(::Type{SLogarithmic{T}}) where {T} = SLogarithmic{big(T)}
-Base.typemin(::Type{SLogarithmic{T}}) where {T} = SLogarithmic{T}(typemax(Logarithmic{T}), true)
-Base.typemax(::Type{SLogarithmic{T}}) where {T} = SLogarithmic{T}(typemax(Logarithmic{T}))
-Base.unsigned(::Type{SLogarithmic{T}}) where {T} = Logarithmic{T}
-Base.signed(::Type{SLogarithmic{T}}) where {T} = SLogarithmic{T}
+Base.widen(::Type{Logarithmic{T}}) where {T} = Logarithmic{widen(T)}
+Base.big(::Type{Logarithmic{T}}) where {T} = Logarithmic{big(T)}
+Base.typemin(::Type{Logarithmic{T}}) where {T} = Logarithmic{T}(typemax(ULogarithmic{T}), true)
+Base.typemax(::Type{Logarithmic{T}}) where {T} = Logarithmic{T}(typemax(ULogarithmic{T}))
+Base.unsigned(::Type{Logarithmic{T}}) where {T} = ULogarithmic{T}
+Base.signed(::Type{Logarithmic{T}}) where {T} = Logarithmic{T}
 
 # special values
-Base.zero(::Type{SLogarithmic{T}}) where {T} = SLogarithmic(zero(Logarithmic{T}))
-Base.one(::Type{SLogarithmic{T}}) where {T} = SLogarithmic(one(Logarithmic{T}))
+Base.zero(::Type{Logarithmic{T}}) where {T} = Logarithmic(zero(ULogarithmic{T}))
+Base.one(::Type{Logarithmic{T}}) where {T} = Logarithmic(one(ULogarithmic{T}))
 
 # predicates
-Base.iszero(x::SLogarithmic) = iszero(x.abs)
-Base.isone(x::SLogarithmic) = isone(x.abs) && !x.signbit
-Base.isinf(x::SLogarithmic) = isinf(x.abs)
-Base.isfinite(x::SLogarithmic) = isfinite(x.abs)
-Base.isnan(x::SLogarithmic) = isnan(x.abs)
+Base.iszero(x::Logarithmic) = iszero(x.abs)
+Base.isone(x::Logarithmic) = isone(x.abs) && !x.signbit
+Base.isinf(x::Logarithmic) = isinf(x.abs)
+Base.isfinite(x::Logarithmic) = isfinite(x.abs)
+Base.isnan(x::Logarithmic) = isnan(x.abs)
 
 # sign
-Base.sign(x::SLogarithmic) = (s=sign(x.abs); ifelse(x.signbit, -s, s))
-Base.signbit(x::SLogarithmic) = x.signbit
-Base.abs(x::SLogarithmic) = SLogarithmic(x.abs)
+Base.sign(x::Logarithmic) = (s=sign(x.abs); ifelse(x.signbit, -s, s))
+Base.signbit(x::Logarithmic) = x.signbit
+Base.abs(x::Logarithmic) = Logarithmic(x.abs)
 
 # ordering
-Base.:(==)(x::SLogarithmic, y::SLogarithmic) = (iszero(x) && iszero(y)) || (x.abs==y.abs && x.signbit==y.signbit)
-Base.:<(x::SLogarithmic, y::SLogarithmic) = x.signbit ? y.signbit ? (y.abs < x.abs) : !(iszero(x) && iszero(y)) : y.signbit ? (false) : (x.abs < y.abs)
-Base.:≤(x::SLogarithmic, y::SLogarithmic) = x.signbit ? y.signbit ? (y.abs ≤ x.abs) : true : y.signbit ? (iszero(x) && iszero(y)) : (x.abs ≤ y.abs)
+Base.:(==)(x::Logarithmic, y::Logarithmic) = (iszero(x) && iszero(y)) || (x.abs==y.abs && x.signbit==y.signbit)
+Base.:<(x::Logarithmic, y::Logarithmic) = x.signbit ? y.signbit ? (y.abs < x.abs) : !(iszero(x) && iszero(y)) : y.signbit ? (false) : (x.abs < y.abs)
+Base.:≤(x::Logarithmic, y::Logarithmic) = x.signbit ? y.signbit ? (y.abs ≤ x.abs) : true : y.signbit ? (iszero(x) && iszero(y)) : (x.abs ≤ y.abs)
 
 # epsilon
-Base.nextfloat(x::SLogarithmic) = x.signbit && !iszero(x) ? SLogarithmic(prevfloat(x.abs), true) : SLogarithmic(nextfloat(x.abs))
-Base.prevfloat(x::SLogarithmic) = x.signbit || iszero(x) ? SLogarithmic(nextfloat(x.abs), true) : SLogarithmic(prevfloat(x.abs))
+Base.nextfloat(x::Logarithmic) = x.signbit && !iszero(x) ? Logarithmic(prevfloat(x.abs), true) : Logarithmic(nextfloat(x.abs))
+Base.prevfloat(x::Logarithmic) = x.signbit || iszero(x) ? Logarithmic(nextfloat(x.abs), true) : Logarithmic(prevfloat(x.abs))
 
 # random
-Base.rand(rng::AbstractRNG, ::Random.SamplerType{SLogarithmic{T}}) where {T<:AbstractFloat} = exptosexp(T, rand(rng, Random.SamplerType{Logarithmic{T}}()))
-Base.rand(rng::AbstractRNG, ::Random.SamplerType{SLogarithmic}) = rand(rng, Random.SamplerType{SLogarithmic{Float64}}())
+Base.rand(rng::AbstractRNG, ::Random.SamplerType{Logarithmic{T}}) where {T<:AbstractFloat} = exptosexp(T, rand(rng, Random.SamplerType{ULogarithmic{T}}()))
+Base.rand(rng::AbstractRNG, ::Random.SamplerType{Logarithmic}) = rand(rng, Random.SamplerType{Logarithmic{Float64}}())
