@@ -18,4 +18,11 @@ include("arithmetic.jl")
 include("io.jl")
 include("init.jl")
 
+# type aliases
+for T in (Float64, Float32, Float16, BigFloat)
+  @eval const $(Symbol(:ULog,T)) = ULogarithmic{$T}
+  @eval const $(Symbol(:Log,T)) = Logarithmic{$T}
+  @eval export $(Symbol(:ULog,T)), $(Symbol(:Log,T))
+end
+
 end # module
