@@ -18,7 +18,7 @@ sexp(x::T) where {T} = sexp(T, x)
 """
     exp(ULogarithmic, x)
 
-The number `exp(x)` represented as an `ULogarithmic`.
+The number `exp(x)` represented as a [`ULogarithmic`](@ref).
 """
 Base.exp(::Type{ULogarithmic}, x::Real) = exp(x)
 Base.exp(::Type{ULogarithmic{T}}, x::Real) where {T} = exp(T, x)
@@ -26,7 +26,7 @@ Base.exp(::Type{ULogarithmic{T}}, x::Real) where {T} = exp(T, x)
 """
     exp(Logarithmic, x)
 
-The number `exp(x)` represented as a `Logarithmic`.
+The number `exp(x)` represented as a [`Logarithmic`](@ref).
 """
 Base.exp(::Type{Logarithmic}, x::Real) = sexp(x)
 Base.exp(::Type{Logarithmic{T}}, x::Real) where {T} = sexp(T, x)
