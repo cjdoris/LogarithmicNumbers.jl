@@ -1,8 +1,8 @@
 # LogarithmicNumbers.jl
 
-Implements a [logarithmic number system](https://en.wikipedia.org/wiki/Logarithmic_number_system).
+A [logarithmic number system](https://en.wikipedia.org/wiki/Logarithmic_number_system) for Julia.
 
-Provides two subtypes of `Real`: the signed `Logarithmic` and unsigned `ULogarithmic`. Each represents the absolute value by its logarithm, and the signed type additionally has a sign bit.
+Provides two subtypes of `Real`: the unsigned `ULogarithmic`, representing a positive number in log-space; and signed `ULogarithmic` which additionally has a sign bit.
 
 This is useful when numbers are too big or small to fit accurately into a `Float64` and you only really care about magnitude.
 
@@ -10,7 +10,11 @@ For example, it can be useful to represent probabilities in this form, and you d
 
 ## Installation
 
-This package is not currently registered, but you can still install it with the command `] add https://github.com/cjdoris/LogarithmicNumbers.jl`.
+Type `]` to open the package manager then execute
+
+```
+pkg> install LogarithmicNumbers
+```
 
 ## Example
 ```
@@ -32,11 +36,13 @@ julia> log(x)
 999.8545865421312
 ```
 
-## Interface
+## Documentation
 
-Two things are exported:
+Two main types are exported:
 * Type `ULogarithmic{T}`, which represents a positive real number by its logarithm of type `T`.
 * Type `Logarithmic{T}` (signed), which represents a real number by its absolute value as a `ULogarithmic{T}` and a sign bit.
+
+Also exports type aliases `ULogFloat64`, `LogFloat64`, `ULogFloat32`, `LogFloat32`, `ULogFloat16`, `LogFloat16`, `ULogBigFloat`, `LogBigFloat`.
 
 Features:
 * `ULogarithmic(x)` and `Logarithmic(x)` represent the number `x`.
@@ -46,7 +52,9 @@ Features:
 * Random: `rand(ULogarithmic)` and `rand(Logarithmic)` produces a random number in the unit interval.
 * Other functions: `float`, `big`, `unsigned` (converts `ULogarithmic` to `Logarithmic`), `signed` (vice versa), `widen`, `typemin`, `typemax`, `zero`, `one`, `iszero`, `isone`, `isinf`, `isfinite`, `isnan`, `sign`, `signbit`, `abs`, `nextfloat`, `prevfloat`, `write`, `read`.
 
-## Distributions.jl
+## Interoperability with other packages
+
+### Distributions.jl
 
 If `D` is a distribution, then `cdf(ULogarithmic, D, x)` computes the `cdf` of `D` at `x` as a `ULogarithmic` number. Internally it calls `logcdf(D, x)`.
 
