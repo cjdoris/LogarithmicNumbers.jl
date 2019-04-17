@@ -8,10 +8,10 @@ Base.inv(x::ULogarithmic{T}) where {T} = exp(T, -x.log)
 Base.:+(x::ULogarithmic{T}, y::ULogarithmic{T}, rest::ULogarithmic{T}...) where {T} = _add(x, y, rest...)
 Base.:-(x::ULogarithmic{T}, y::ULogarithmic{T}) where {T} = (xlog=x.log; ylog=y.log; xlog<ylog && error("difference is negative"); exp(xlog + log(1 - Base.exp(ylog-xlog))))
 
-@inline _add(xs::ULogarithmic{T}...) where {T} = (xlogs=log.(xs); maxlog=max(xlogs...); isinf(maxlog) ? exp(maxlog) : exp(maxlog + log(+((Base.exp).(xlogs.-maxlog)...))))
+@inline _add(xs::ULogarithmic{T}...) where {T} = (xlogs=log.(xs); maxlog=max(xlogs...); isinf(maxlog) ? exp(maxlog)::typeof(exp(maxlog + log(+((Base.exp).(xlogs.-maxlog)...)))) : exp(maxlog + log(+((Base.exp).(xlogs.-maxlog)...))))
 
 Base.prod(xs::AbstractArray{<:ULogarithmic}) = exp(sum(log.(xs)))
-Base.sum(xs::AbstractArray{<:ULogarithmic}) = (xlogs=log.(xs); maxlog=maximum(xlogs); isinf(maxlog) ? exp(maxlog) : exp(maxlog + log(sum(Base.exp.(xlogs.-maxlog)))))
+Base.sum(xs::AbstractArray{<:ULogarithmic}) = (xlogs=log.(xs); maxlog=maximum(xlogs); isinf(maxlog) ? exp(maxlog)::typeof(exp(maxlog + log(sum(Base.exp.(xlogs.-maxlog))))) : exp(maxlog + log(sum(Base.exp.(xlogs.-maxlog)))))
 
 
 Base.:-(x::Logarithmic) = Logarithmic(x.abs, !x.signbit)
