@@ -4,7 +4,7 @@
 Represents the positive real number `x` by storing its logarithm.
 
 !!! tip
-    If you know `lx=log(x)` then use [`exp(ULogarithmic, lx)`](@ref Base.exp(::Type{ULogarithmic},::Real)) instead.
+    If you know `logx=log(x)` then use [`exp(ULogarithmic, lx)`](@ref Base.exp(::Type{ULogarithmic},::Real)) instead.
 """
 struct ULogarithmic{T<:Real} <: Real
   log::T
@@ -18,7 +18,7 @@ end
 Represents the real number `x` by storing its absolute value as a `ULogarithmic` and its sign bit.
 
 !!! tip
-    If you know `lx=log(abs(x))` then use [`exp(Logarithmic, lx, signbit)`](@ref Base.exp(::Type{Logarithmic},::Real)) instead.
+    If you know `logx=log(abs(x))` then use [`exp(Logarithmic, logx)`](@ref Base.exp(::Type{Logarithmic},::Real)) instead.
 """
 struct Logarithmic{T<:Real} <: Real
   abs::ULogarithmic{T}
