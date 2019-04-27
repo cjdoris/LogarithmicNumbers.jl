@@ -1,5 +1,5 @@
 # conversion
-float(x::ULogarithmic) = exp(x.log)
+float(x::ULogarithmic) = exp(float(x.log))
 big(x::ULogarithmic{T}) where {T} = uexp(big(x.log))
 unsigned(x::ULogarithmic) = x
 signed(x::ULogarithmic) = Logarithmic(x)
