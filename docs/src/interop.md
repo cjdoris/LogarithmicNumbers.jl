@@ -4,6 +4,22 @@ If any of the following packages are loaded, then some extra functionality is ma
 
 ## Distributions.jl
 
-If `D` is a distribution, then `cdf(ULogarithmic, D, x)` computes the `cdf` of `D` at `x` as a `ULogarithmic` number. Internally it calls `logcdf(D, x)`.
+There are functions `cdf(T, D, x)`,  `ccdf(T, D, x)` and `pdf(T, D, x)` where `T<:AbstractLogarithmic`. These are the same as without the `T` argument except the return type is `T`.
 
-Similarly there is `ccdf(ULogarithmic, D, x)` and `pdf(ULogarithmic, D, x)`.
+Internally, they call `logcdf(D, x)` etc.
+
+```julia
+julia> cdf(ULogarithmic, Normal(1, 1), 0)
+exp(-1.841021645009264)
+```
+
+## StatsFuns.jl
+
+There are functions `Dcdf(T, args...)`, `Dccdf(T, args...)` and `Dpdf(T, args...)` where `D` is a distribution name (e.g. `norm`) and `T<:AbstractLogarithmic`. These are the same as without the `T` argument except the return type is `T`.
+
+Internally they call `Dlogcdf(args...)` etc.
+
+```julia
+julia> normcdf(ULogarithmic, 1, 1, 0)
+exp(-1.841021645009264)
+```

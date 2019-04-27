@@ -14,13 +14,13 @@ Provides the [`ULogarithmic`](@ref) and [`Logarithmic`](@ref) subtypes of `Real`
 * Other functions: `float`, `big`, `unsigned` (converts `ULogarithmic` to `Logarithmic`), `signed` (vice versa), `widen`, `typemin`, `typemax`, `zero`, `one`, `iszero`, `isone`, `isinf`, `isfinite`, `isnan`, `sign`, `signbit`, `abs`, `nextfloat`, `prevfloat`, `write`, `read`.
 
 ## Example
-```
+```julia
 julia> using LogarithmicNumbers
 
 julia> ULogarithmic(2.7)
 exp(0.9932517730102834)
 
-julia> float(ans)
+julia> float(ans) # convert to Float64
 2.7
 
 julia> x = exp(ULogarithmic, 1000) - exp(ULogarithmic, 998)

@@ -19,12 +19,6 @@ sexp(x::T) where {T} = sexp(T, x)
     exp(T<:AbstractLogarithmic, x)
 
 The number `exp(x)` represented as a `T`.
-
-## Examples
-```jldoctest
-julia> exp(ULogFloat64, 2)
-exp(2.0)
-```
 """
 exp(::Type{E} where {E<:(AbstractLogarithmic{T} where {T})}, x::Real)
 
