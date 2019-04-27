@@ -1,0 +1,2 @@
+rand(rng::AbstractRNG, ::Random.SamplerType{E}) where {T<:AbstractFloat, E<:AbstractLogarithmic{T}} = exp(E, -randexp(rng, T))
+rand(rng::AbstractRNG, ::Random.SamplerType{E}) where {E<:ALog} = exp(E, -randexp(rng))
