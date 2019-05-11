@@ -13,8 +13,8 @@ export AbstractLogarithmic, ULogarithmic, Logarithmic
 
 include("types.jl")
 include("constructors.jl")
+include("ulogarithmic.jl")
 include("logarithmic.jl")
-include("slogarithmic.jl")
 include("promotion.jl")
 include("arithmetic.jl")
 include("random.jl")

@@ -1,40 +1,39 @@
 # conversion
-(::Type{T})(x::ULogarithmic) where {T<:AbstractFloat} = T(exp(float(x.log)))
-big(x::ULogarithmic{T}) where {T} = uexp(big(x.log))
-unsigned(x::ULogarithmic) = x
-signed(x::ULogarithmic) = Logarithmic(x)
+(::Type{T})(x::Logarithmic) where {T<:AbstractFloat} = (y=float(x.abs); T(ifelse(x.signbit, -y, y)))
+big(x::Logarithmic) = Logarithmic(big(x.abs), x.signbit)
+unsigned(x::Logarithmic) = (x.signbit && !iszero(x) && throw(DomainError(x)); x.abs)
+signed(x::Logarithmic) = x
 
 # type functions
-widen(::Type{ULogarithmic{T}}) where {T} = ULogarithmic{widen(T)}
-big(::Type{ULogarithmic{T}}) where {T} = ULogarithmic{big(T)}
-typemin(::Type{ULogarithmic{T}}) where {T} = uexp(typemin(T))
-typemax(::Type{ULogarithmic{T}}) where {T} = uexp(typemax(T))
-unsigned(::Type{ULogarithmic{T}}) where {T} = ULogarithmic{T}
-signed(::Type{ULogarithmic{T}}) where {T} = Logarithmic{T}
+widen(::Type{Logarithmic{T}}) where {T} = Logarithmic{widen(T)}
+big(::Type{Logarithmic{T}}) where {T} = Logarithmic{big(T)}
+typemin(::Type{Logarithmic{T}}) where {T} = Logarithmic{T}(typemax(ULogarithmic{T}), true)
+typemax(::Type{Logarithmic{T}}) where {T} = Logarithmic{T}(typemax(ULogarithmic{T}))
+unsigned(::Type{Logarithmic{T}}) where {T} = ULogarithmic{T}
+signed(::Type{Logarithmic{T}}) where {T} = Logarithmic{T}
 
 # special values
-zero(::Type{ULogarithmic{T}}) where {T} = uexp(T, -Inf)
-one(::Type{ULogarithmic{T}}) where {T} = uexp(T, zero(T))
+zero(::Type{Logarithmic{T}}) where {T} = Logarithmic(zero(ULogarithmic{T}))
+one(::Type{Logarithmic{T}}) where {T} = Logarithmic(one(ULogarithmic{T}))
 
 # predicates
-iszero(x::ULogarithmic) = isinf(x.log) && signbit(x.log)
-isone(x::ULogarithmic) = iszero(x.log)
-isinf(x::ULogarithmic) = isinf(x.log) && !signbit(x.log)
-isfinite(x::ULogarithmic) = !isinf(x)
-isnan(x::ULogarithmic) = isnan(x.log)
+iszero(x::Logarithmic) = iszero(x.abs)
+isone(x::Logarithmic) = isone(x.abs) && !x.signbit
+isinf(x::Logarithmic) = isinf(x.abs)
+isfinite(x::Logarithmic) = isfinite(x.abs)
+isnan(x::Logarithmic) = isnan(x.abs)
 
 # sign
-sign(x::ULogarithmic) = iszero(x) ? zero(x) : one(x)
-signbit(x::ULogarithmic) = false
-abs(x::ULogarithmic) = x
+sign(x::Logarithmic) = (s=sign(x.abs); ifelse(x.signbit, -s, s))
+signbit(x::Logarithmic) = x.signbit
+abs(x::Logarithmic) = Logarithmic(x.abs)
 
 # ordering
-(==)(x::ULogarithmic, y::ULogarithmic) = x.log == y.log
-<(x::ULogarithmic, y::ULogarithmic) = x.log < y.log
-≤(x::ULogarithmic, y::ULogarithmic) = x.log ≤ y.log
-cmp(x::ULogarithmic, y::ULogarithmic) = cmp(x.log, y.log)
-isless(x::ULogarithmic, y::ULogarithmic) = isless(x.log, y.log)
+(==)(x::Logarithmic, y::Logarithmic) = (iszero(x) && iszero(y)) || (x.abs==y.abs && x.signbit==y.signbit)
+<(x::Logarithmic, y::Logarithmic) = x.signbit ? y.signbit ? (y.abs < x.abs) : !(iszero(x) && iszero(y)) : y.signbit ? (false) : (x.abs < y.abs)
+≤(x::Logarithmic, y::Logarithmic) = x.signbit ? y.signbit ? (y.abs ≤ x.abs) : true : y.signbit ? (iszero(x) && iszero(y)) : (x.abs ≤ y.abs)
+isless(x::Logarithmic, y::Logarithmic) = x.signbit ? y.signbit ? isless(y.abs,x.abs) : true : y.signbit ? false : isless(x.abs,y.abs)
 
 # epsilon
-nextfloat(x::ULogarithmic) = uexp(nextfloat(x.log))
-prevfloat(x::ULogarithmic) = uexp(prevfloat(x.log))
+nextfloat(x::Logarithmic) = x.signbit && !iszero(x) ? Logarithmic(prevfloat(x.abs), true) : Logarithmic(nextfloat(x.abs))
+prevfloat(x::Logarithmic) = x.signbit || iszero(x) ? Logarithmic(nextfloat(x.abs), true) : Logarithmic(prevfloat(x.abs))
