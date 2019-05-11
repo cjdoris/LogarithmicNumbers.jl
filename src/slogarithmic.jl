@@ -1,5 +1,5 @@
 # conversion
-float(x::Logarithmic) = (y=float(x.abs); ifelse(x.signbit, -y, y))
+(::Type{T})(x::Logarithmic) where {T<:AbstractFloat} = (y=float(x.abs); T(ifelse(x.signbit, -y, y)))
 big(x::Logarithmic) = Logarithmic(big(x.abs), x.signbit)
 unsigned(x::Logarithmic) = (x.signbit && !iszero(x) && throw(DomainError(x)); x.abs)
 signed(x::Logarithmic) = x
@@ -32,6 +32,7 @@ abs(x::Logarithmic) = Logarithmic(x.abs)
 (==)(x::Logarithmic, y::Logarithmic) = (iszero(x) && iszero(y)) || (x.abs==y.abs && x.signbit==y.signbit)
 <(x::Logarithmic, y::Logarithmic) = x.signbit ? y.signbit ? (y.abs < x.abs) : !(iszero(x) && iszero(y)) : y.signbit ? (false) : (x.abs < y.abs)
 ≤(x::Logarithmic, y::Logarithmic) = x.signbit ? y.signbit ? (y.abs ≤ x.abs) : true : y.signbit ? (iszero(x) && iszero(y)) : (x.abs ≤ y.abs)
+isless(x::Logarithmic, y::Logarithmic) = x.signbit ? y.signbit ? isless(y.abs,x.abs) : true : y.signbit ? false : isless(x.abs,y.abs)
 
 # epsilon
 nextfloat(x::Logarithmic) = x.signbit && !iszero(x) ? Logarithmic(prevfloat(x.abs), true) : Logarithmic(nextfloat(x.abs))

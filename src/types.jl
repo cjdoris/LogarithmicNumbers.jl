@@ -13,11 +13,11 @@ ALog = AbstractLogarithmic{T} where {T}
 Represents the positive real number `x` by storing its logarithm.
 
 !!! tip
-    If you know `logx=log(x)` then use [`exp(ULogarithmic, lx)`](@ref exp(::Type{ULogarithmic},::Real)) instead.
+    If you know `logx=log(x)` then use [`exp(ULogarithmic, logx)`](@ref exp(::Type{ULogarithmic},::Real)) instead.
 """
 struct ULogarithmic{T} <: AbstractLogarithmic{T}
   log::T
-  ULogarithmic{T}(::Val{:INNER}, x::T) where {T} = new(x)
+  Base.exp(::Type{ULogarithmic{T}}, x::T) where {T<:Real} = new{T}(x)
 end
 
 
@@ -32,5 +32,5 @@ Represents the real number `x` by storing its absolute value as a [`ULogarithmic
 struct Logarithmic{T} <: AbstractLogarithmic{T}
   abs::ULogarithmic{T}
   signbit::Bool
-  Logarithmic{T}(::Val{:INNER}, abs::ULogarithmic{T}, signbit::Bool=false) where {T<:Real} = new(abs, signbit)
+  Logarithmic{T}(abs::ULogarithmic{T}, signbit::Bool=false) where {T<:Real} = new{T}(abs, signbit)
 end

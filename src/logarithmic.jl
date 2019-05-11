@@ -1,5 +1,5 @@
 # conversion
-float(x::ULogarithmic) = exp(float(x.log))
+(::Type{T})(x::ULogarithmic) where {T<:AbstractFloat} = T(exp(float(x.log)))
 big(x::ULogarithmic{T}) where {T} = uexp(big(x.log))
 unsigned(x::ULogarithmic) = x
 signed(x::ULogarithmic) = Logarithmic(x)
@@ -33,6 +33,7 @@ abs(x::ULogarithmic) = x
 <(x::ULogarithmic, y::ULogarithmic) = x.log < y.log
 ≤(x::ULogarithmic, y::ULogarithmic) = x.log ≤ y.log
 cmp(x::ULogarithmic, y::ULogarithmic) = cmp(x.log, y.log)
+isless(x::ULogarithmic, y::ULogarithmic) = isless(x.log, y.log)
 
 # epsilon
 nextfloat(x::ULogarithmic) = uexp(nextfloat(x.log))
