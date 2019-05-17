@@ -56,6 +56,12 @@ Features:
 
 ### Distributions.jl
 
-If `D` is a distribution, then `cdf(ULogarithmic, D, x)` computes the `cdf` of `D` at `x` as a `ULogarithmic` number. Internally it calls `logcdf(D, x)`.
+Calling `cdf(ULogarithmic, ...)` is like calling `cdf(...)` but returns the answer as a `ULogarithmic` (and calls `logcdf(...)` internally).
 
 Similarly there is `ccdf(ULogarithmic, D, x)` and `pdf(ULogarithmic, D, x)`.
+
+## StatsFuns.jl
+
+Calling `normcdf(ULogarithmic, ...)` is like calling `normcdf(...)` but returns the answer as a `ULogarithmic` (and calls `normlogcdf(...)` internally).
+
+Similarly there is `normpdf` and `normccdf` and equivalents for other distributions.
