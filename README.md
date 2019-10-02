@@ -55,7 +55,7 @@ Features:
 
 ## Interoperability with other packages
 
-## StatsFuns.jl
+### StatsFuns.jl
 
 Calling `normcdf(ULogarithmic, ...)` is like calling `normcdf(...)` but returns the answer as a `ULogarithmic` (and calls `normlogcdf(...)` internally).
 
