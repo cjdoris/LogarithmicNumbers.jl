@@ -7,14 +7,21 @@ module LogarithmicNumbers
 
 using Requires, Random
 
-import Base: exp, log, *, /, ^, inv, +, -, prod, sum, show, write, read, float, big, unsigned, signed, widen, typemin, typemax, zero, one, iszero, isone, isinf, isfinite, isnan, sign, signbit, abs, ==, <, ≤, cmp, isless, nextfloat, prevfloat, rand, promote_rule
+import Base:
+	exp, log, *, /, ^, inv, +, -, prod, sum, angle, show,
+	write, read, float, big, unsigned, signed, widen,
+	typemin, typemax, zero, one, iszero, isone, isinf,
+	isfinite, isnan, sign, signbit, abs, ==, isequal, <, ≤,
+	cmp, isless, nextfloat, prevfloat, rand, promote_rule,
+	conj, real, imag
 
-export AbstractLogarithmic, ULogarithmic, Logarithmic
+export ULogarithmic, Logarithmic, CLogarithmic
 
 include("types.jl")
 include("constructors.jl")
 include("ulogarithmic.jl")
 include("logarithmic.jl")
+include("clogarithmic.jl")
 include("promotion.jl")
 include("arithmetic.jl")
 include("random.jl")
@@ -25,10 +32,12 @@ include("init.jl")
 for T in (Float64, Float32, Float16, BigFloat)
   ULogT = Symbol(:ULog, T)
   LogT = Symbol(:Log, T)
+  CLogT = Symbol(:CLog, T)
   @eval begin
       const $(ULogT) = $(ULogarithmic{T})
       const $(LogT) = $(Logarithmic{T})
-      export $(ULogT), $(LogT)
+      const $(CLogT) = $(CLogarithmic{T})
+      export $(ULogT), $(LogT), $(CLogT)
   end
 end
 

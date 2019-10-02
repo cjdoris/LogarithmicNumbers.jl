@@ -1,4 +1,6 @@
 # conversion
+float(x::ULogarithmic) = AbstractFloat(x)
+float(::Type{A}) where {A<:AnyLog} = typeof(float(one(A)))
 (::Type{T})(x::ULogarithmic) where {T<:AbstractFloat} = T(exp(float(x.log)))
 big(x::ULogarithmic{T}) where {T} = uexp(big(x.log))
 unsigned(x::ULogarithmic) = x
@@ -30,6 +32,7 @@ abs(x::ULogarithmic) = x
 
 # ordering
 (==)(x::ULogarithmic, y::ULogarithmic) = x.log == y.log
+isequal(x::ULogarithmic, y::ULogarithmic) = isequal(x.log, y.log)
 <(x::ULogarithmic, y::ULogarithmic) = x.log < y.log
 ≤(x::ULogarithmic, y::ULogarithmic) = x.log ≤ y.log
 cmp(x::ULogarithmic, y::ULogarithmic) = cmp(x.log, y.log)
