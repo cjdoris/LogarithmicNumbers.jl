@@ -116,6 +116,7 @@ atypes = (ULogarithmic, Logarithmic, CLogarithmic)
         	if A==ULogarithmic && x<y
 	    		@test_throws DomainError _float(_sub(_exp(A, x), _exp(A, y)))
 	    	elseif A==CLogarithmic && y==Inf && x<y
+	    		# problem with complex logarithmics
 	    		@test_broken _approx(_float(_sub(_exp(A, x), _exp(A, y))), exp(x)-exp(y))
 	    	else
 	    		@test _approx(_float(_sub(_exp(A, x), _exp(A, y))), exp(x)-exp(y))
