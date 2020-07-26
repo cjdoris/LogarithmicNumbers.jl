@@ -28,7 +28,11 @@ vecs = (
 	Int[x for x in vals if x isa Int && x ≥ 0],
 )
 
-atypes = (ULogarithmic, Logarithmic, CLogarithmic)
+atypes = (ULogarithmic{Float64}, CLogarithmic{Float64})#, CLogarithmic{Float64})
+
+_chtype(::Type{ULogarithmic{T1}}, ::Type{T2}) where {T1, T2} = ULogarithmic{T2}
+_chtype(::Type{Logarithmic{T1}}, ::Type{T2}) where {T1, T2} = Logarithmic{T2}
+_chtype(::Type{CLogarithmic{T1}}, ::Type{T2}) where {T1, T2} = CLogarithmic{T2}
 
 @testset "LogarithmicNumbers" begin
 
@@ -40,24 +44,24 @@ atypes = (ULogarithmic, Logarithmic, CLogarithmic)
 
 	@testset "exp" begin
 		for A in atypes, x in vals
-			@test _exp(A, x) isa A{typeof(x)}
+			@test _exp(A, x) isa A
 		end
 	end
 
 	@testset "convert" begin
 	    for A in atypes, x in vals
-	    	if x < 0 && A == ULogarithmic
-	    		@test_throws DomainError A(x)
+	    	if x < 0 && A == atypes[1]
+	    		@test_throws DomainError convert(A, x)
 	    	else
-	    		@test (@inferred A(x)) isa A
+	    		@test (@inferred convert(A, x)) isa A
 	    	end
 	    end
 	end
 
     @testset "log" begin
     	for A in atypes, x in vals
-    		y = A==CLogarithmic ? Complex(x) : x
-			@test _log(_exp(A, x)) === y
+    		y = A==atypes[end] ? Complex(x) : x
+			@test _log(_exp(A, x)) == y
     	end
     end
 
@@ -65,12 +69,12 @@ atypes = (ULogarithmic, Logarithmic, CLogarithmic)
 	    for A in atypes, x in vals
 	    	_float(_exp(A, x)) ≈ exp(x) || @info("float1",A,x)
 	    	@test _float(_exp(A, x)) ≈ exp(x)
-	    	if x < 0 && A == ULogarithmic
+	    	if x < 0 && A == atypes[1]
 	    		nothing
-	    	elseif x==-Inf && A == CLogarithmic
-	    		@test AbstractFloat(A(x)) == x
+	    	elseif x==-Inf && A == atypes[end]
+	    		@test AbstractFloat(convert(A, x)) == x
 	    	else
-	    		@test _float(A(x)) ≈ x
+	    		@test _approx(_float(convert(A, x)), x)
 	    	end
 	    end
 	end
@@ -113,9 +117,9 @@ atypes = (ULogarithmic, Logarithmic, CLogarithmic)
 
     @testset "sub" begin
         for A in atypes, x in vals, y in vals
-        	if A==ULogarithmic && x<y
+        	if A==atypes[1] && x<y
 	    		@test_throws DomainError _float(_sub(_exp(A, x), _exp(A, y)))
-	    	elseif A==CLogarithmic && y==Inf && x<y
+	    	elseif A==atypes[end] && y==Inf && x<y
 	    		# problem with complex logarithmics
 	    		@test_broken _approx(_float(_sub(_exp(A, x), _exp(A, y))), exp(x)-exp(y))
 	    	else

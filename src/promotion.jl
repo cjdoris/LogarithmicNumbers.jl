@@ -32,10 +32,10 @@ promote_rule(::Type{A}, ::Type{R}) where {A<:AnyLog, R<:Real} =
 # generated for type-stability
 @generated promote_rule(::Type{CLogarithmic}, ::Type{C}) where {C<:Complex} =
 	try
-		:($(typeof(CLogarithmic(one(C)))))
+		:($(typeof(convert(CLogarithmic, one(C)))))
 	catch
 		:(Union{})
 	end
 
-promote_rule(::Type{CLogarithmic{T}}, ::Type{C}) where {T, C<:Complex} =
+promote_rule(::Type{CLogarithmic{T}}, ::Type{Complex{C}}) where {T, C<:Real} =
 	promote_type(CLogarithmic{T}, promote_type(CLogarithmic, C))
