@@ -10,10 +10,8 @@ For example, it can be useful to represent probabilities in this form, and you d
 
 ## Installation
 
-Type `]` to open the package manager then execute
-
 ```
-pkg> install LogarithmicNumbers
+] add LogarithmicNumbers
 ```
 
 ## Example
