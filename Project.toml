@@ -1,7 +1,7 @@
 name = "LogarithmicNumbers"
 uuid = "aa2f6b4e-9042-5d33-9679-40d3a6b85899"
 authors = ["Christopher Doris"]
-version = "0.4.1"
+version = "0.4.2"
 
 [deps]
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
