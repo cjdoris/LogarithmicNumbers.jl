@@ -584,7 +584,7 @@ function Base.exp(x::ULogarithmic)
 end
 
 function Base.exp(x::Logarithmic)
-    Logarithmic(uexp(x.signbit ? -exp(x.log) : exp(x.log)))
+    Logarithmic(x.signbit ? -exp(x.abs) : exp(x.abs))
 end
 
 
