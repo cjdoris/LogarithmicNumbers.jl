@@ -19,7 +19,8 @@ worry about getting zero when multiplying many of them together.
 ```
 
 ## Example
-```
+
+```julia
 julia> using LogarithmicNumbers
 
 julia> ULogarithmic(2.7)
