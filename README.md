@@ -20,7 +20,7 @@ worry about getting zero when multiplying many of them together.
 ## Installation
 
 ```
-] add LogarithmicNumbers
+pkg> add LogarithmicNumbers
 ```
 
 ## Example
