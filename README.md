@@ -66,17 +66,27 @@ Features:
 
 ## Interoperability with other packages
 
-### StatsFuns.jl
+We overload some functions `f` so that `f(ULogarithmic, ...)` is the same as `f(...)` but
+the answer is returned as a `ULogarithmic`. Internally it calls an accurate log version of
+the function.
 
-Calling `normcdf(ULogarithmic, ...)` is like calling `normcdf(...)` but returns the answer
-as a `ULogarithmic` (and calls `normlogcdf(...)` internally).
+### [StatsFuns.jl](https://github.com/JuliaStats/StatsFuns.jl)
 
-Similarly there is `normpdf(ULogarithmic, ...)` and `normccdf(ULogarithmic, ...)` and
-equivalents for other distributions.
+- `normpdf(ULogarithmic, ...)`
+- `normcdf(ULogarithmic, ...)`
+- `normccdf(ULogarithmic, ...)`
+- Plus equivalents for other distributions.
 
-### Distributions.jl
+### [Distributions.jl](https://github.com/JuliaStats/Distributions.jl)
 
-Calling `cdf(ULogarithmic, ...)` is like calling `cdf(...)` but returns the answer as a
-`ULogarithmic` (and calls `logcdf(...)` internally).
+- `pdf(ULogarithmic, ...)`
+- `cdf(ULogarithmic, ...)`
+- `ccdf(ULogarithmic, ...)`
 
-Similarly there is `ccdf(ULogarithmic, ...)` and `pdf(ULogarithmic, ...)`.
+### [SpecialFunctions.jl](https://github.com/JuliaMath/SpecialFunctions.jl)
+
+- `gamma(ULogarithmic, ...)`
+- `factorial(ULogarithmic, ...)`
+- `beta(ULogarithmic, ...)`
+- `erfc(ULogarithmic, ...)`
+- `erfcx(ULogarithmic, ...)`

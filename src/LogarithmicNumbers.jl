@@ -610,27 +610,26 @@ function Base.read(io::IO, ::Type{Logarithmic{T}}) where {T}
     Logarithmic{T}(abs, signbit)
 end
 
-function __init__()
-
-    @require Distributions="31c24e10-a181-5473-b8eb-7969acd0382f" begin
-        Distributions.cdf(::Type{E}, args...; opts...) where {E<:AnyLogarithmic} = exp(E, Distributions.logcdf(args...; opts...))
-        Distributions.ccdf(::Type{E}, args...; opts...) where {E<:AnyLogarithmic} = exp(E, Distributions.logccdf(args...; opts...))
-        Distributions.pdf(::Type{E}, args...; opts...) where {E<:AnyLogarithmic} = exp(E, Distributions.logpdf(args...; opts...))
-    end
-
-    @require StatsFuns="4c63d2b9-4356-54db-8cca-17b64c39e42c" begin
-        for lfn in propertynames(StatsFuns)
-            m = match(r"^(.*)log(pdf|cdf|ccdf)", string(lfn))
-            if m !== nothing
-                fn = Symbol(m[1], m[2])
-                @eval StatsFuns.$(fn)(::Type{E}, args...; opts...) where {E<:AnyLogarithmic} = exp(E, StatsFuns.$(lfn)(args...; opts...))
-            end
+_overload(mod, f, logf) = quote
+    if isdefined($mod, $(QuoteNode(f))) && isdefined($mod, $(QuoteNode(logf)))
+        @inline function $mod.$f(::Type{T}, args...; opts...) where {T<:AnyLogarithmic}
+            exp(T, $mod.$logf(args...; opts...))
         end
     end
+end
 
+_overloads(mod, fs) = :($([_overload(mod, f, logf) for (f, logf) in fs]...);)
+
+const DISTRIBUTIONS_OVERLOADS = [f => Symbol(:log, f) for f in [:cdf, :ccdf, :pdf]]
+const STATSFUNS_DISTS = [:srdist, :nchisq, :hyper, :ntdist, :tdist, :binom, :pois, :fdist, :norm, :beta, :nfdist, :chisq, :gamma, :nbeta, :nbinom]
+const STATSFUNS_OVERLOADS = [Symbol(d, f) => Symbol(d, :log, f) for d in STATSFUNS_DISTS for f in [:cdf, :ccdf, :pdf]]
+const SPECIALFUNCTIONS_OVERLOADS = [f => Symbol(:log, f) for f in [:gamma, :factorial, :beta, :erfc, :erfcx]]
+
+@eval function __init__()
+    @require Distributions="31c24e10-a181-5473-b8eb-7969acd0382f" $(_overloads(:Distributions, DISTRIBUTIONS_OVERLOADS))
+    @require StatsFuns="4c63d2b9-4356-54db-8cca-17b64c39e42c" $(_overloads(:StatsFuns, STATSFUNS_OVERLOADS))
+    @require SpecialFunctions="276daf66-3868-5448-9aa4-cd146d93841b" $(_overloads(:SpecialFunctions, SPECIALFUNCTIONS_OVERLOADS))
     # TODO: Rmath
-    # TODO: SpecialFunctions
-
 end
 
 end
