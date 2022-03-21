@@ -419,58 +419,38 @@ end
 
 ### Promotion
 
-function Base.promote_rule(::Type{ULogarithmic}, ::Type{ULogarithmic})
-    ULogarithmic
-end
-
-function Base.promote_rule(::Type{ULogarithmic}, ::Type{ULogarithmic{T}}) where {T}
-    ULogarithmic{T}
-end
-
-function Base.promote_rule(::Type{ULogarithmic{S}}, ::Type{ULogarithmic{T}}) where {S,T}
-    ULogarithmic{promote_type(S, T)}
-end
-
-function Base.promote_rule(::Type{Logarithmic}, ::Type{Logarithmic})
-    Logarithmic
-end
-
-function Base.promote_rule(::Type{Logarithmic}, ::Type{Logarithmic{T}}) where {T}
-    Logarithmic{T}
-end
-
-function Base.promote_rule(::Type{Logarithmic{S}}, ::Type{Logarithmic{T}}) where {S,T}
-    Logarithmic{promote_type(S, T)}
-end
-
-function Base.promote_rule(::Type{ULogarithmic}, ::Type{Logarithmic})
-    Logarithmic
-end
-
-function Base.promote_rule(::Type{ULogarithmic{T}}, ::Type{Logarithmic}) where {T}
-    Logarithmic{T}
-end
-
-function Base.promote_rule(::Type{ULogarithmic}, ::Type{Logarithmic{T}}) where {T}
-    Logarithmic{T}
-end
-
-function Base.promote_rule(::Type{ULogarithmic{S}}, ::Type{Logarithmic{T}}) where {S,T}
-    Logarithmic{promote_type(S, T)}
-end
-
-@generated function Base.promote_rule(::Type{ULogarithmic}, ::Type{R}) where {R<:Real}
-    try
-        typeof(ULogarithmic(one(R)))
-    catch
-        Union{}
+_promote_rule(::Type, ::Type) = Union{}
+for (i, A) in enumerate([ULogarithmic, Logarithmic])
+    for (j, B) in enumerate([ULogarithmic, Logarithmic])
+        C = i > j ? A : B
+        @eval begin
+            _promote_rule(::Type{$A}, ::Type{$B}) = $C
+            _promote_rule(::Type{$A}, ::Type{$B{T}}) where {T} = $C{T}
+            _promote_rule(::Type{$A{S}}, ::Type{$B}) where {S} = $C{S}
+            _promote_rule(::Type{$A{S}}, ::Type{$B{T}}) where {S,T} = $C{promote_type(S,T)}
+        end
     end
 end
 
-function Base.promote_rule(::Type{T}, ::Type{R}) where {T<:AnyLogarithmic, R<:Real}
-    promote_type(T, promote_type(ULogarithmic, R))
+function Base.promote_rule(::Type{T}, ::Type{R}) where {T<:AnyLogarithmic, R<:AnyLogarithmic}
+    _promote_rule(T, R)
 end
 
+@generated function Base.promote_rule(::Type{T}, ::Type{R}) where {T<:AnyLogarithmic, R<:Real}
+    # TODO: Think about this some more. Always return ULogarithmic? Always Logarithmic?
+    isunsigned = try
+        typemin(R) ≥ 0
+    catch
+        false
+    end
+    L = isunsigned ? ULogarithmic : Logarithmic
+    R2 = try
+        typeof(L(one(R)))
+    catch
+        Union{}
+    end
+    promote_type(T, R2)
+end
 
 ### Arithmetic
 
@@ -584,7 +564,7 @@ function Base.exp(x::ULogarithmic)
 end
 
 function Base.exp(x::Logarithmic)
-    Logarithmic(x.signbit ? -exp(x.abs) : exp(x.abs))
+    x.signbit ? inv(exp(x.abs)) : exp(x.abs)
 end
 
 
