@@ -1,12 +1,16 @@
 # LogarithmicNumbers.jl
 
-A [logarithmic number system](https://en.wikipedia.org/wiki/Logarithmic_number_system) for Julia.
+A [logarithmic number system](https://en.wikipedia.org/wiki/Logarithmic_number_system) for
+Julia.
 
-Provides the types `ULogarithmic`, `Logarithmic` and `CLogarithmic` for representing non-negative real numbers, real numbers and complex numbers in log-space.
+Provides the type `ULogarithmic` for representing non-negative real numbers in log-space,
+and `Logarithmic` for representing all real numbers.
 
-This is useful when numbers are too big or small to fit accurately into a `Float64` and you only really care about magnitude.
+This is useful when numbers are too big or small to fit accurately into a `Float64` and you
+only really care about magnitude.
 
-For example, it can be useful to represent probabilities in this form, and you don't need to worry about getting zero when multiplying many of them together.
+For example, it can be useful to represent probabilities in this form, and you don't need to
+worry about getting zero when multiplying many of them together.
 
 ## Installation
 
@@ -36,12 +40,11 @@ julia> log(x)
 
 ## Documentation
 
-Three main types are exported:
-* Type `ULogarithmic{T}`, which represents a non-negative real number by its logarithm of type `T`.
-* Type `Logarithmic{T}`, which represents a real number by its absolute value as a `ULogarithmic{T}` and a sign bit.
-* Type `CLogarithmic{T}`, which represents a complex number by its absolute value as a `ULogarithmic{T}` and an angle of type `T`.
+These types are exported:
+* `ULogarithmic{T}` represents a non-negative real number by its logarithm of type `T`.
+* `Logarithmic{T}` represents a real number by its absolute value as a `ULogarithmic{T}` and a sign bit.
 
-Also exports type aliases `ULogFloat64`, `LogFloat64`, `CLogFloat64`, `ULogFloat32`, `LogFloat32`, `CLogFloat32`, `ULogFloat16`, `LogFloat16`, `CLogFloat16`, `ULogBigFloat`, `LogBigFloat`, `CLogBigFloat`.
+Also exports type aliases `ULogarithmicF16`, `ULogarithmicF32`, `ULogarithmicF64`, `LogarithmicF16`, `LogarithmicF32`, `LogarithmicF64`.
 
 Features:
 * `ULogarithmic(x)` (and `Logarithmic(x)`, etc.) represents the number `x`.

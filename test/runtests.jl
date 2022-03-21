@@ -28,14 +28,13 @@ vecs = (
 	Int[x for x in vals if x isa Int && x ≥ 0],
 )
 
-atypes = (ULogarithmic, Logarithmic, CLogarithmic)
+atypes = (ULogarithmic, Logarithmic)
 
 @testset "LogarithmicNumbers" begin
 
 	@testset "types" begin
 	    @test @isdefined ULogarithmic
 	    @test @isdefined Logarithmic
-	    @test @isdefined CLogarithmic
 	end
 
 	@testset "exp" begin
@@ -56,8 +55,7 @@ atypes = (ULogarithmic, Logarithmic, CLogarithmic)
 
     @testset "log" begin
     	for A in atypes, x in vals
-    		y = A==CLogarithmic ? Complex(x) : x
-			@test _log(_exp(A, x)) === y
+			@test _log(_exp(A, x)) === x
     	end
     end
 
@@ -67,8 +65,6 @@ atypes = (ULogarithmic, Logarithmic, CLogarithmic)
 	    	@test _float(_exp(A, x)) ≈ exp(x)
 	    	if x < 0 && A == ULogarithmic
 	    		nothing
-	    	elseif x==-Inf && A == CLogarithmic
-	    		@test AbstractFloat(A(x)) == x
 	    	else
 	    		@test _float(A(x)) ≈ x
 	    	end
@@ -115,9 +111,6 @@ atypes = (ULogarithmic, Logarithmic, CLogarithmic)
         for A in atypes, x in vals, y in vals
         	if A==ULogarithmic && x<y
 	    		@test_throws DomainError _float(_sub(_exp(A, x), _exp(A, y)))
-	    	elseif A==CLogarithmic && y==Inf && x<y
-	    		# problem with complex logarithmics
-	    		@test_broken _approx(_float(_sub(_exp(A, x), _exp(A, y))), exp(x)-exp(y))
 	    	else
 	    		@test _approx(_float(_sub(_exp(A, x), _exp(A, y))), exp(x)-exp(y))
 	    	end
