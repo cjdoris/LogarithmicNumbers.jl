@@ -480,7 +480,9 @@ Base.:(-)(x::ULogarithmic) = Logarithmic(x, true)
 Base.:(-)(x::Logarithmic) = Logarithmic(x.abs, !x.signbit)
 
 function Base.:(+)(x::T, y::T) where {T<:ULogarithmic}
-    if x.log ≥ y.log
+    if x.log == y.log
+        uexp(x.log + log1p(exp(zero(y.log) - zero(x.log))))
+    elseif x.log ≥ y.log
         uexp(x.log + log1p(exp(y.log - x.log)))
     else
         uexp(y.log + log1p(exp(x.log - y.log)))
@@ -498,7 +500,9 @@ function Base.:(+)(x::T, y::T) where {T<:Logarithmic}
 end
 
 function Base.:(-)(x::T, y::T) where {T<:ULogarithmic}
-    if x.log ≥ y.log
+    if x.log == y.log
+        uexp(x.log + log1p(-exp(zero(y.log) - zero(x.log))))
+    elseif x.log ≥ y.log
         uexp(x.log + log1p(-exp(y.log - x.log)))
     else
         throw(DomainError((x, y), "difference is negative"))
@@ -534,11 +538,19 @@ function Base.:(/)(x::T, y::T) where {T<:Logarithmic}
 end
 
 function Base.:(^)(x::ULogarithmic, n::Real)
-    uexp(x.log * n)
+    if n == 0
+        uexp(zero(x.log) * n)
+    else
+        uexp(x.log * n)
+    end
 end
 
 function Base.:(^)(x::ULogarithmic, n::Integer)
-    uexp(x.log * n)
+    if n == 0
+        uexp(zero(x.log) * n)
+    else
+        uexp(x.log * n)
+    end
 end
 
 function Base.:(^)(x::Logarithmic, n::Integer)

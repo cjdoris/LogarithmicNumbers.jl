@@ -85,13 +85,7 @@ atypes = (ULogarithmic, Logarithmic)
 
     @testset "pow" begin
 		for A in atypes, x in vals, n in (-2,-1,0,1,2,-1.1,0.0,2.3)
-			if isinf(x) && iszero(n)
-				# should be 1.0 but is NaN
-				@test_broken _approx(_float(_pow(_exp(A, x), n)), exp(x)^n)
-				@test isnan(_float(_pow(_exp(A, x), n)))
-			else
-			    @test _approx(_float(_pow(_exp(A, x), n)), exp(x)^n)
-			end
+			@test _approx(_float(_pow(_exp(A, x), n)), exp(x)^n)
         end
     end
 
