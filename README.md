@@ -1,5 +1,9 @@
 # LogarithmicNumbers.jl
 
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![Test Status](https://github.com/cjdoris/LogarithmicNumbers.jl/workflows/Tests/badge.svg)](https://github.com/cjdoris/LogarithmicNumbers.jl/actions?query=workflow%3ATests)
+[![codecov](https://codecov.io/gh/cjdoris/LogarithmicNumbers.jl/branch/main/graph/badge.svg?token=AECCWGKRVJ)](https://codecov.io/gh/cjdoris/LogarithmicNumbers.jl)
+
 A [logarithmic number system](https://en.wikipedia.org/wiki/Logarithmic_number_system) for
 Julia.
 
