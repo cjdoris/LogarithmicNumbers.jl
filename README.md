@@ -50,8 +50,8 @@ These types are exported:
 * `ULogarithmic{T}` represents a non-negative real number by its logarithm of type `T`.
 * `Logarithmic{T}` represents a real number by its absolute value as a `ULogarithmic{T}` and
   a sign bit.
-* `ULogarithmicF16`, `ULogarithmicF32`, `ULogarithmicF64`, `LogarithmicF16`,
-  `LogarithmicF32` and `LogarithmicF64` are type aliases for `ULogarithmic{Float16}` etc.
+* `LogFloat64` is an alias for `Logarithmic{Float64}`. There are also `ULogFloat16`,
+  `ULogFloat32`, `ULogFloat64`, `LogFloat16`, and `LogFloat32`.
 
 Features:
 * `ULogarithmic(x)` (and `Logarithmic(x)`, etc.) represents the number `x`.

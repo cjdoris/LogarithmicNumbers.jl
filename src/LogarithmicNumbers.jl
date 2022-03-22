@@ -7,8 +7,8 @@ module LogarithmicNumbers
 
 using Requires, Random
 
-export ULogarithmic, ULogarithmicF16, ULogarithmicF32, ULogarithmicF64
-export Logarithmic, LogarithmicF16, LogarithmicF32, LogarithmicF64
+export ULogarithmic, ULogFloat16, ULogFloat32, ULogFloat64
+export Logarithmic, LogFloat16, LogFloat32, LogFloat64
 
 
 ### Types
@@ -40,12 +40,12 @@ struct Logarithmic{T} <: Real
     Logarithmic{T}(abs::ULogarithmic{T}, signbit::Bool=false) where {T<:Real} = new{T}(abs, signbit)
 end
 
-const ULogarithmicF16 = ULogarithmic{Float16}
-const ULogarithmicF32 = ULogarithmic{Float32}
-const ULogarithmicF64 = ULogarithmic{Float64}
-const LogarithmicF16 = Logarithmic{Float16}
-const LogarithmicF32 = Logarithmic{Float32}
-const LogarithmicF64 = Logarithmic{Float64}
+const ULogFloat16 = ULogarithmic{Float16}
+const ULogFloat32 = ULogarithmic{Float32}
+const ULogFloat64 = ULogarithmic{Float64}
+const LogFloat16 = Logarithmic{Float16}
+const LogFloat32 = Logarithmic{Float32}
+const LogFloat64 = Logarithmic{Float64}
 
 const AnyLogarithmic{T} = Union{ULogarithmic{T}, Logarithmic{T}}
 
