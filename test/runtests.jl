@@ -70,6 +70,14 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 				end
 			end
 		end
+		@test ULogFloat64(ULogFloat64(0)) === ULogFloat64(0)
+		@test ULogFloat64(ULogFloat32(0)) === ULogFloat64(0)
+		@test ULogarithmic(ULogFloat32(0)) === ULogFloat32(0)
+		@test LogFloat64(LogFloat64(0)) === LogFloat64(0)
+		@test LogFloat64(LogFloat32(0)) === LogFloat64(0)
+		@test Logarithmic(LogFloat32(0)) === LogFloat32(0)
+		@test LogFloat64(ULogarithmic(0)) == LogFloat64(0)
+		@test Logarithmic(ULogarithmic(0)) === Logarithmic(0)
 	end
 
 	@testset "float" begin
@@ -84,6 +92,17 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 			@test @inferred(Float64(y)) ≈ Float32(x)
 			@test @inferred(Float32(y)) isa Float32
 			@test @inferred(Float32(y)) ≈ Float32(x)
+		end
+	end
+
+	@testset "promote" begin
+		for A1 in atypes, A2 in atypes, T1 in (nothing, Int, Float64), T2 in (nothing, Int, Float64)
+			A3 = A1 <: Logarithmic || A2 <: Logarithmic ? Logarithmic : ULogarithmic
+			T3 = T1 === nothing ? T2 === nothing ? nothing : T2 : T2 === nothing ? T1 : promote_type(T1, T2)
+			B1 = T1 === nothing ? A1 : A1{T1}
+			B2 = T2 === nothing ? A2 : A2{T2}
+			B3 = T3 === nothing ? A3 : A3{T3}
+			@test promote_type(A1, A2) == A3
 		end
 	end
 
@@ -153,22 +172,26 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 	@testset "special values" begin
 
 		@testset "zero" begin
+			@test zero(ULogarithmic) === exp(ULogarithmic, -Inf)
 			@test zero(ULogFloat64) === exp(ULogFloat64, -Inf)
 			@test zero(ULogFloat32) === exp(ULogFloat32, -Inf)
+			@test zero(Logarithmic) === Logarithmic(zero(ULogarithmic))
 			@test zero(LogFloat64) === LogFloat64(zero(ULogFloat64))
 			@test zero(LogFloat32) === LogFloat32(zero(ULogFloat32))
 		end
 
 		@testset "one" begin
-			@test one(ULogFloat64) === exp(ULogFloat64, 0)
-			@test one(ULogFloat32) === exp(ULogFloat32, 0)
+			@test one(ULogarithmic) === exp(ULogarithmic, 0.0)
+			@test one(ULogFloat64) === exp(ULogFloat64, 0.0)
+			@test one(ULogFloat32) === exp(ULogFloat32, 0.0)
+			@test one(Logarithmic) === Logarithmic(one(ULogarithmic))
 			@test one(LogFloat64) === LogFloat64(one(ULogFloat64))
 			@test one(LogFloat32) === LogFloat32(one(ULogFloat32))
 		end
 
 		@testset "typemin" begin
-			@test typemin(ULogFloat64) === ULogFloat64(0)
-			@test typemin(ULogFloat32) === ULogFloat32(0)
+			@test typemin(ULogFloat64) === ULogFloat64(0.0)
+			@test typemin(ULogFloat32) === ULogFloat32(0.0)
 			@test typemin(LogFloat64) === LogFloat64(-Inf)
 			@test typemin(LogFloat32) === LogFloat32(-Inf)
 		end
@@ -432,7 +455,7 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 	end
 
 	@testset "random" begin
-		for A in atypes
+		for A in atypes2
 			xs = rand(A, 1000)
 			@test all(x isa A for x in xs)
 			@test all(0 ≤ x ≤ 1 for x in xs)
