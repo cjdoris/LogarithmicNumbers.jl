@@ -69,6 +69,7 @@ function Base.exp(::Type{Logarithmic}, x::T) where {T<:Real}
 end
 
 uexp(x) = exp(ULogarithmic, x)
+uexp(T,x) = exp(ULogarithmic{T}, x)
 
 function ULogarithmic{T}(x::Real) where {T<:Real}
     exp(ULogarithmic{T}, log(x))
@@ -155,7 +156,7 @@ end
 ### Type functions
 
 function Base.float(::Type{T}) where {T<:AnyLogarithmic}
-    typeof(float(one(A)))
+    typeof(float(one(T)))
 end
 
 function Base.widen(::Type{ULogarithmic{T}}) where {T}
@@ -172,22 +173,6 @@ end
 
 function Base.big(::Type{Logarithmic{T}}) where {T}
     Logarithmic{big(T)}
-end
-
-function Base.typemin(::Type{ULogarithmic{T}}) where {T}
-    uexp(typemin(T))
-end
-
-function Base.typemin(::Type{Logarithmic{T}}) where {T}
-    Logarithmic{T}(typemax(ULogarithmic{T}), true)
-end
-
-function Base.typemax(::Type{ULogarithmic{T}}) where {T}
-    uexp(typemax(T))
-end
-
-function Base.typemax(::Type{Logarithmic{T}}) where {T}
-    Logarithmic{T}(typemax(ULogarithmic{T}))
 end
 
 function Base.unsigned(::Type{ULogarithmic{T}}) where {T}
@@ -241,6 +226,22 @@ function Base.one(::Type{Logarithmic}) where {T}
     Logarithmic(one(ULogarithmic))
 end
 
+function Base.typemin(::Type{ULogarithmic{T}}) where {T}
+    uexp(typemin(T))
+end
+
+function Base.typemin(::Type{Logarithmic{T}}) where {T}
+    Logarithmic{T}(typemax(ULogarithmic{T}), true)
+end
+
+function Base.typemax(::Type{ULogarithmic{T}}) where {T}
+    uexp(typemax(T))
+end
+
+function Base.typemax(::Type{Logarithmic{T}}) where {T}
+    Logarithmic{T}(typemax(ULogarithmic{T}))
+end
+
 
 ### Predicates
 
@@ -288,7 +289,7 @@ function Base.sign(x::ULogarithmic)
 end
 
 function Base.sign(x::Logarithmic)
-    iszero(x) ? zero(x) : z.signbit ? -one(x) : one(x)
+    iszero(x) ? zero(x) : x.signbit ? -one(x) : one(x)
 end
 
 function Base.signbit(x::ULogarithmic)
@@ -365,10 +366,6 @@ end
 
 function Base.cmp(x::ULogarithmic, y::ULogarithmic)
     cmp(x.log, y.log)
-end
-
-function Base.cmp(x::Logarithmic, y::Logarithmic)
-    error("not implemented")
 end
 
 function Base.isless(x::ULogarithmic, y::ULogarithmic)

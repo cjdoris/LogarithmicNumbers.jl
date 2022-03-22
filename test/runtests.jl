@@ -1,6 +1,6 @@
 using LogarithmicNumbers, Test
 
-_approx(x,y) = (x ≈ y) || (isnan(x) && isnan(y))
+_approx(x,y) = isapprox(x, y, atol=1e-3) || (isnan(x) && isnan(y))
 
 # use these to check for type stability
 _exp(args...) = @inferred exp(args...)
@@ -111,71 +111,354 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 		end
 	end
 
-    @testset "log" begin
-    	for A in atypes, x in vals
-			@test _log(_exp(A, x)) === x
-    	end
-    end
+	@testset "type functions" begin
 
-    @testset "mul" begin
-    	for A in atypes, x in vals, y in vals
-    		@test _approx(_float(_mul(_exp(A, x), _exp(A, y))), exp(x) * exp(y))
-    	end
-    end
+		@testset "float" begin
+			@test float(ULogFloat64) == Float64
+			@test float(ULogFloat32) == Float32
+			@test float(LogFloat64) == Float64
+			@test float(LogFloat32) == Float32
+		end
 
-    @testset "div" begin
-    	for A in atypes, x in vals, y in vals
-    		@test _approx(_float(_div(_exp(A, x), _exp(A, y))), exp(x) / exp(y))
-    	end
-    end
+		@testset "widen" begin
+			@test widen(ULogFloat64) == ULogarithmic{BigFloat}
+			@test widen(ULogFloat32) == ULogFloat64
+			@test widen(LogFloat64) == Logarithmic{BigFloat}
+			@test widen(LogFloat32) == LogFloat64
+		end
 
-    @testset "pow" begin
-		for A in atypes, x in vals, n in (-2,-1,0,1,2,-1.1,0.0,2.3)
-			@test _approx(_float(_pow(_exp(A, x), n)), exp(x)^n)
-        end
-    end
+		@testset "big" begin
+			@test big(ULogFloat64) == ULogarithmic{BigFloat}
+			@test big(ULogFloat32) == ULogarithmic{BigFloat}
+			@test big(LogFloat64) == Logarithmic{BigFloat}
+			@test big(LogFloat32) == Logarithmic{BigFloat}
+		end
 
-    @testset "inv" begin
-        for A in atypes, x in vals
-            @test _approx(_float(_inv(_exp(A, x))), inv(exp(x)))
-        end
-    end
+		@testset "unsigned" begin
+			@test unsigned(ULogFloat64) == ULogFloat64
+			@test unsigned(ULogFloat32) == ULogFloat32
+			@test unsigned(LogFloat64) == ULogFloat64
+			@test unsigned(LogFloat32) == ULogFloat32
+		end
 
-    @testset "add" begin
-        for A in atypes, x in vals, y in vals
-    		@test _approx(_float(_add(_exp(A, x), _exp(A, y))), exp(x)+exp(y))
-        end
-    end
+		@testset "signed" begin
+			@test signed(ULogFloat64) == LogFloat64
+			@test signed(ULogFloat32) == LogFloat32
+			@test signed(LogFloat64) == LogFloat64
+			@test signed(LogFloat32) == LogFloat32
+		end
 
-    @testset "sub" begin
-        for A in atypes, x in vals, y in vals
-        	if A==ULogarithmic && x<y
-	    		@test_throws DomainError _float(_sub(_exp(A, x), _exp(A, y)))
-	    	else
-	    		@test _approx(_float(_sub(_exp(A, x), _exp(A, y))), exp(x)-exp(y))
-	    	end
-        end
-    end
+	end
 
-    @testset "prod" begin
-        for A in atypes, xs in vecs
-        	_approx(_float(_prod(map(x->_exp(A,x), xs))), prod(exp.(xs))) || @info("prod",A,xs)
-        	@test _approx(_float(_prod(map(x->_exp(A,x), xs))), prod(exp.(xs)))
-        end
-    end
+	@testset "special values" begin
 
-    @testset "sum" begin
-        for A in atypes, xs in vecs
-        	if eltype(xs) <: AbstractFloat
-	            @test _approx(_float(_sum(map(x->exp(A,x),xs))), sum(exp.(xs)))
-	        else
-	        	# sum is not type-stable because typeof(xs[1]+xs[2]) != typeof(xs[1]).
-	        	# hence this test is the same as above but without the stability check.
-	        	# we don't promise type stability unless the base type is a float, so
-	        	# this isn't a broken test.
-	        	@test _approx(_float(sum(map(x->exp(A,x),xs))), sum(exp.(xs)))
-	        end
-        end
-    end
+		@testset "zero" begin
+			@test zero(ULogFloat64) === exp(ULogFloat64, -Inf)
+			@test zero(ULogFloat32) === exp(ULogFloat32, -Inf)
+			@test zero(LogFloat64) === LogFloat64(zero(ULogFloat64))
+			@test zero(LogFloat32) === LogFloat32(zero(ULogFloat32))
+		end
+
+		@testset "one" begin
+			@test one(ULogFloat64) === exp(ULogFloat64, 0)
+			@test one(ULogFloat32) === exp(ULogFloat32, 0)
+			@test one(LogFloat64) === LogFloat64(one(ULogFloat64))
+			@test one(LogFloat32) === LogFloat32(one(ULogFloat32))
+		end
+
+		@testset "typemin" begin
+			@test typemin(ULogFloat64) === ULogFloat64(0)
+			@test typemin(ULogFloat32) === ULogFloat32(0)
+			@test typemin(LogFloat64) === LogFloat64(-Inf)
+			@test typemin(LogFloat32) === LogFloat32(-Inf)
+		end
+
+		@testset "typemax" begin
+			@test typemax(ULogFloat64) === ULogFloat64(Inf)
+			@test typemax(ULogFloat32) === ULogFloat32(Inf)
+			@test typemax(LogFloat64) === LogFloat64(Inf)
+			@test typemax(LogFloat32) === LogFloat32(Inf)
+		end
+
+	end
+
+	@testset "predicates" begin
+
+		@testset "iszero" begin
+			for A in atypes, x in vals
+				A <: ULogarithmic && x < 0 && continue
+				y = A(x)
+				@test @inferred(iszero(y)) == iszero(x)
+			end
+		end
+
+		@testset "isone" begin
+			for A in atypes, x in vals
+				A <: ULogarithmic && x < 0 && continue
+				y = A(x)
+				@test @inferred(isone(y)) == isone(x)
+			end
+		end
+
+		@testset "isinf" begin
+			for A in atypes, x in vals
+				A <: ULogarithmic && x < 0 && continue
+				y = A(x)
+				@test @inferred(isinf(y)) == isinf(x)
+			end
+		end
+
+		@testset "isfinite" begin
+			for A in atypes, x in vals
+				A <: ULogarithmic && x < 0 && continue
+				y = A(x)
+				@test @inferred(isfinite(y)) == isfinite(x)
+			end
+		end
+
+		@testset "isnan" begin
+			for A in atypes, x in (vals..., NaN, -NaN)
+				A <: ULogarithmic && x < 0 && continue
+				y = A(x)
+				@test @inferred(isnan(y)) == isnan(x)
+			end
+		end
+
+	end
+
+	@testset "ordering" begin
+
+		@testset "sign" begin
+			for A in atypes, x in vals
+				A <: ULogarithmic && x < 0 && continue
+				y = A(x)
+				@test @inferred(sign(y)) == sign(y)
+			end
+		end
+
+		@testset "signbit" begin
+			for A in atypes, x in vals
+				A <: ULogarithmic && x < 0 && continue
+				y = A(x)
+				@test @inferred(signbit(y)) == signbit(y)
+			end
+		end
+
+		@testset "abs" begin
+			for A in atypes, x in vals
+				A <: ULogarithmic && x < 0 && continue
+				y = A(x)
+				@test float(@inferred(abs(y))) ≈ abs(x)
+			end
+		end
+
+		@testset "==" begin
+			for A in atypes, x1 in vals, x2 in vals
+				A <: ULogarithmic && (x1 < 0 || x2 < 0) && continue
+				y1 = A(x1)
+				y2 = A(x2)
+				@test @inferred(y1 == y2) == (x1 == x2)
+			end
+		end
+
+		@testset "isequal" begin
+			for A in atypes, x1 in vals, x2 in vals
+				A <: ULogarithmic && (x1 < 0 || x2 < 0) && continue
+				y1 = A(x1)
+				y2 = A(x2)
+				@test @inferred(isequal(y1, y2)) == isequal(x1, x2)
+			end
+		end
+
+		@testset "<" begin
+			for A in atypes, x1 in vals, x2 in vals
+				A <: ULogarithmic && (x1 < 0 || x2 < 0) && continue
+				y1 = A(x1)
+				y2 = A(x2)
+				@test @inferred(y1 < y2) == (x1 < x2)
+			end
+		end
+
+		@testset "≤" begin
+			for A in atypes, x1 in vals, x2 in vals
+				A <: ULogarithmic && (x1 < 0 || x2 < 0) && continue
+				y1 = A(x1)
+				y2 = A(x2)
+				@test @inferred(y1 ≤ y2) == (x1 ≤ x2)
+			end
+		end
+
+		@testset "cmp" begin
+			for A in atypes, x1 in vals, x2 in vals
+				A <: ULogarithmic && (x1 < 0 || x2 < 0) && continue
+				y1 = A(x1)
+				y2 = A(x2)
+				@test @inferred(cmp(y1, y2)) == cmp(x1, x2)
+			end
+		end
+
+		@testset "isless" begin
+			for A in atypes, x1 in vals, x2 in vals
+				A <: ULogarithmic && (x1 < 0 || x2 < 0) && continue
+				y1 = A(x1)
+				y2 = A(x2)
+				@test @inferred(isless(y1, y2)) == isless(x1, x2)
+			end
+		end
+
+		@testset "nextfloat" begin
+			for A in atypes, x in vals
+				x isa AbstractFloat || continue
+				@test @inferred(nextfloat(_exp(A, x))) == _exp(A, nextfloat(x))
+			end
+		end
+
+		@testset "prevfloat" begin
+			for A in atypes, x in vals
+				x isa AbstractFloat || continue
+				if A <: Logarithmic && x == -Inf
+					@test @inferred(prevfloat(_exp(A, x))) == -_exp(A, nextfloat(-Inf))
+				else
+					@test @inferred(prevfloat(_exp(A, x))) == _exp(A, prevfloat(x))
+				end
+			end
+		end
+
+	end
+
+	@testset "arithmetic" begin
+
+		@testset "pos" begin
+			for A in atypes, x in vals
+				A <: ULogarithmic && x < 0 && continue
+				@test float(+A(x)) ≈ float(x)
+			end
+		end
+
+		@testset "neg" begin
+			for A in atypes, x in vals
+				A <: ULogarithmic && x < 0 && continue
+				@test float(-A(x)) ≈ float(-x)
+			end
+		end
+
+		@testset "add" begin
+			for A in atypes, x in vals, y in vals
+				A <: ULogarithmic && (x < 0 || y < 0) && continue
+				@test _approx(_float(_add(A(x), A(y))), x+y)
+			end
+		end
+
+		@testset "sum" begin
+			for A in atypes, xs in vecs
+				A <: ULogarithmic && any(x<0 for x in xs) && continue
+				if eltype(xs) <: AbstractFloat
+					@test _approx(_float(_sum(map(x->A(x),xs))), sum(xs))
+				else
+					# sum is not type-stable because typeof(xs[1]+xs[2]) != typeof(xs[1]).
+					# hence this test is the same as above but without the stability check.
+					# we don't promise type stability unless the base type is a float, so
+					# this isn't a broken test.
+					@test _approx(_float(sum(map(x->A(x),xs))), sum(xs))
+				end
+			end
+		end
+
+		@testset "sub" begin
+			for A in atypes, x in vals, y in vals
+				A <: ULogarithmic && (x < 0 || y < 0) && continue
+				if A <: ULogarithmic && x < y
+					@test_throws DomainError _float(_sub(A(x), A(y)))
+				else
+					@test _approx(_float(_sub(A(x), A(y))), x-y)
+				end
+			end
+		end
+
+		@testset "mul" begin
+			for A in atypes, x in vals, y in vals
+				A <: ULogarithmic && (x < 0 || y < 0) && continue
+				@test _approx(_float(_mul(A(x), A(y))), x * y)
+			end
+		end
+
+		@testset "prod" begin
+			for A in atypes, xs in vecs
+				A <: ULogarithmic && any(x<0 for x in xs) && continue
+				@test _approx(_float(_prod(map(x->A(x), xs))), prod(xs))
+			end
+		end
+
+		@testset "div" begin
+			for A in atypes, x in vals, y in vals
+				A <: ULogarithmic && (x < 0 || y < 0) && continue
+				@test _approx(_float(_div(A(x), A(y))), x / y)
+			end
+		end
+
+		@testset "pow" begin
+			for A in atypes, x in vals, n in (-2,-1,0,1,2,-1.1,0.0,2.3)
+				x < 0 && continue
+				@test _approx(_float(_pow(A(x), n)), float(x)^n)
+			end
+		end
+
+		@testset "inv" begin
+			for A in atypes, x in vals
+				A <: ULogarithmic && x < 0 && continue
+				@test _approx(_float(_inv(A(x))), inv(x))
+			end
+		end
+
+		@testset "log" begin
+			for A in atypes, x in vals
+				A <: ULogarithmic && x < 0 && continue
+				@test _log(_exp(A, x)) === x
+				if x < 0
+					@test_throws DomainError _log(A(x))
+				else
+					@test _log(A(x)) ≈ log(x)
+				end
+			end
+		end
+
+		@testset "exp" begin
+			for A in atypes, x in vals
+				A <: ULogarithmic && x < 0 && continue
+				@test float(exp(A(x))) ≈ exp(x)
+			end
+		end
+
+	end
+
+	@testset "random" begin
+		for A in atypes
+			xs = rand(A, 1000)
+			@test all(x isa A for x in xs)
+			@test all(0 ≤ x ≤ 1 for x in xs)
+		end
+	end
+
+	@testset "IO" begin
+
+		@testset "show" begin
+			@test repr(_exp(ULogarithmic, -12)) == "exp(-12)"
+			@test repr(_exp(Logarithmic, -34)) == "+exp(-34)"
+			@test repr(-_exp(Logarithmic, -45)) == "-exp(-45)"
+		end
+
+		@testset "read / write" begin
+			for A in atypes, x in vals
+				A <: ULogarithmic && x < 0 && continue
+				y = A(x)
+				io = IOBuffer()
+				write(io, y)
+				seekstart(io)
+				z = read(io, typeof(y))
+				@test y === z
+			end
+		end
+
+	end
 
 end
