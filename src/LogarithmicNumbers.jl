@@ -69,7 +69,6 @@ function Base.exp(::Type{Logarithmic}, x::T) where {T<:Real}
 end
 
 uexp(x) = exp(ULogarithmic, x)
-uexp(T,x) = exp(ULogarithmic{T}, x)
 
 function ULogarithmic{T}(x::Real) where {T<:Real}
     exp(ULogarithmic{T}, log(x))
