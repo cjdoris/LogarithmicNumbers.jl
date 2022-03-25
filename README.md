@@ -54,15 +54,18 @@ These types are exported:
   `ULogFloat32`, `ULogFloat64`, `LogFloat16`, and `LogFloat32`.
 
 Features:
-* `ULogarithmic(x)` (and `Logarithmic(x)`, etc.) represents the number `x`.
-* `exp(ULogarithmic, x)` represents `exp(x)` (and `x` can be huge).
-* Arithmetic: `+`, `-`, `*`, `/`, `^`, `inv`, `log`, `prod`, `sum`.
-* Comparisons: equality, ordering, `cmp`, `isless`.
+* `ULogarithmic(x)` and `Logarithmic(x)` represent the number `x`.
+* `exp(ULogarithmic, x)` represents `exp(x)`, and `x` can be huge.
+* Arithmetic: `+`, `-`, `*`, `/`, `^`, `inv`, `prod`, `sum`.
+* Ordering: `==`, `<`, `≤`, `cmp`, `isless`, `isequal`, `sign`, `signbit`, `abs`.
+* Logarithm: `log`, `log2`, `log10`, `log1p`.
+* Conversion: `float`, `unsigned`, `signed`, `widen`, `big`. These also operate on types.
+* Special values: `zero`, `one`, `typemin`, `typemax`.
+* Predicates: `iszero`, `isone`, `isinf`, `isfinite`, `isnan`.
+* IO: `show`, `write`, `read`.
 * Random: `rand(ULogarithmic)` is a random number in the unit interval.
-* Other functions: `float`, `big`, `unsigned` (converts `ULogarithmic` to `Logarithmic`),
-  `signed` (vice versa), `widen`, `typemin`, `typemax`, `zero`, `one`, `iszero`, `isone`,
-  `isinf`, `isfinite`, `isnan`, `sign`, `signbit`, `abs`, `nextfloat`, `prevfloat`, `write`,
-  `read`.
+* Misc: `nextfloat`, `prevfloat`, `hash`.
+* Note: Any functions not mentioned here might be inaccurate.
 
 ## Interoperability with other packages
 

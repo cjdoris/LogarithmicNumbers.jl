@@ -572,6 +572,22 @@ function Base.log(x::Logarithmic)
     log(x.abs)
 end
 
+function Base.log2(x::AnyLogarithmic)
+    logx = log(x)
+    log2 = log(oftype(logx, 2))
+    logx / log2
+end
+
+function Base.log10(x::AnyLogarithmic)
+    logx = log(x)
+    log10 = log(oftype(logx, 10))
+    logx / log10
+end
+
+function Base.log1p(x::AnyLogarithmic)
+    log(one(x) + x)
+end
+
 function Base.exp(x::ULogarithmic)
     uexp(exp(x.log))
 end
@@ -580,6 +596,19 @@ function Base.exp(x::Logarithmic)
     x.signbit ? inv(exp(x.abs)) : exp(x.abs)
 end
 
+### Hash
+
+const _HASH = hash(ULogarithmic)
+
+function Base.hash(x::ULogarithmic, h::UInt)
+    hash(x.log, hash(_HASH, h))
+end
+
+function Base.hash(x::Logarithmic, h::UInt)
+    # hash the same as ULogarithmic when signbit==false
+    # TODO: hash special values (-Inf, -1, 0, 1, Inf) the same as Float64?
+    hash(x.abs, x.signbit ? hash(_HASH, h) : h)
+end
 
 ### Random
 
