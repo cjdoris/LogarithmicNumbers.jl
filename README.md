@@ -46,18 +46,18 @@ julia> log(x)
 
 ## Documentation
 
-These types are exported:
+### Exported types
 * `ULogarithmic{T}` represents a non-negative real number by its logarithm of type `T`.
 * `Logarithmic{T}` represents a real number by its absolute value as a `ULogarithmic{T}` and
   a sign bit.
 * `LogFloat64` is an alias for `Logarithmic{Float64}`. There are also `ULogFloat16`,
   `ULogFloat32`, `ULogFloat64`, `LogFloat16`, and `LogFloat32`.
 
-Constructors:
+### Constructors
 * `ULogarithmic(x)` and `Logarithmic(x)` represent the number `x`.
 * `exp(ULogarithmic, x)` represents `exp(x)`, and `x` can be huge.
 
-Functions in Base:
+### Functions in Base
 * Arithmetic: `+`, `-`, `*`, `/`, `^`, `inv`, `prod`, `sum`.
 * Ordering: `==`, `<`, `≤`, `cmp`, `isless`, `isequal`, `sign`, `signbit`, `abs`.
 * Logarithm: `log`, `log2`, `log10`, `log1p`.
@@ -69,26 +69,26 @@ Functions in Base:
 * Misc: `nextfloat`, `prevfloat`, `hash`.
 * Note: Any functions not mentioned here might be inaccurate.
 
-## Interoperability with other packages
+### Interoperability with other packages
 
 We overload some functions `f` so that `f(ULogarithmic, ...)` is the same as `f(...)` but
 the answer is returned as a `ULogarithmic`. Internally it calls an accurate log version of
 the function.
 
-### [StatsFuns.jl](https://github.com/JuliaStats/StatsFuns.jl)
+#### [StatsFuns.jl](https://github.com/JuliaStats/StatsFuns.jl)
 
 - `normpdf(ULogarithmic, ...)`
 - `normcdf(ULogarithmic, ...)`
 - `normccdf(ULogarithmic, ...)`
 - Plus equivalents for other distributions.
 
-### [Distributions.jl](https://github.com/JuliaStats/Distributions.jl)
+#### [Distributions.jl](https://github.com/JuliaStats/Distributions.jl)
 
 - `pdf(ULogarithmic, ...)`
 - `cdf(ULogarithmic, ...)`
 - `ccdf(ULogarithmic, ...)`
 
-### [SpecialFunctions.jl](https://github.com/JuliaMath/SpecialFunctions.jl)
+#### [SpecialFunctions.jl](https://github.com/JuliaMath/SpecialFunctions.jl)
 
 - `gamma(ULogarithmic, ...)`
 - `factorial(ULogarithmic, ...)`
