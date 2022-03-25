@@ -8,7 +8,7 @@
 A [logarithmic number system](https://en.wikipedia.org/wiki/Logarithmic_number_system) for
 Julia.
 
-Provides the signed `ULogarithmic` and unsigned `Logarithmic` types for representing real
+Provides the signed `Logarithmic` and unsigned `ULogarithmic` types for representing real
 numbers on a logarithmic scale.
 
 This is useful when numbers are too big or small to fit accurately into a `Float64` and you
