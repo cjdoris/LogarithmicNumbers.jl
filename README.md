@@ -53,9 +53,11 @@ These types are exported:
 * `LogFloat64` is an alias for `Logarithmic{Float64}`. There are also `ULogFloat16`,
   `ULogFloat32`, `ULogFloat64`, `LogFloat16`, and `LogFloat32`.
 
-Features:
+Constructors:
 * `ULogarithmic(x)` and `Logarithmic(x)` represent the number `x`.
 * `exp(ULogarithmic, x)` represents `exp(x)`, and `x` can be huge.
+
+Functions in Base:
 * Arithmetic: `+`, `-`, `*`, `/`, `^`, `inv`, `prod`, `sum`.
 * Ordering: `==`, `<`, `≤`, `cmp`, `isless`, `isequal`, `sign`, `signbit`, `abs`.
 * Logarithm: `log`, `log2`, `log10`, `log1p`.

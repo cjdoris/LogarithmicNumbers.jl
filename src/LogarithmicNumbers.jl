@@ -491,7 +491,7 @@ function Base.:(-)(x::T, y::T) where {T<:ULogarithmic}
         if isnan(d) && iszero(x) && iszero(y)
             d = zero(y.log) - zero(x.log)
         end
-        if d > 1
+        if d < -1
             c = log1p(-exp(d))
         else
             # accurate when d is small
