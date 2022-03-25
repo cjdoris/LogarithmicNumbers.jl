@@ -269,8 +269,12 @@ function Base.isinf(x::Logarithmic)
     isinf(x.abs)
 end
 
-function Base.isfinite(x::AnyLogarithmic)
-    !isinf(x)
+function Base.isfinite(x::ULogarithmic)
+    isfinite(x.log) || signbit(x.log)
+end
+
+function Base.isfinite(x::Logarithmic)
+    isfinite(x.abs)
 end
 
 function Base.isnan(x::ULogarithmic)
@@ -285,11 +289,11 @@ end
 ### Ordering
 
 function Base.sign(x::ULogarithmic)
-    iszero(x) ? zero(x) : one(x)
+    isnan(x) ? x : iszero(x) ? zero(x) : one(x)
 end
 
 function Base.sign(x::Logarithmic)
-    iszero(x) ? zero(x) : x.signbit ? -one(x) : one(x)
+    isnan(x) ? x : iszero(x) ? zero(x) : x.signbit ? -one(x) : one(x)
 end
 
 function Base.signbit(x::ULogarithmic)
@@ -329,7 +333,9 @@ function Base.:(<)(x::ULogarithmic, y::ULogarithmic)
 end
 
 function Base.:(<)(x::Logarithmic, y::Logarithmic)
-    if x.signbit
+    if isnan(x) || isnan(y)
+        false
+    elseif x.signbit
         if y.signbit
             y.abs < x.abs
         else
@@ -349,7 +355,9 @@ function Base.:(≤)(x::ULogarithmic, y::ULogarithmic)
 end
 
 function Base.:(≤)(x::Logarithmic, y::Logarithmic)
-    if x.signbit
+    if isnan(x) || isnan(y)
+        false
+    elseif x.signbit
         if y.signbit
             y.abs ≤ x.abs
         else
@@ -466,7 +474,7 @@ function Base.:(+)(x::T, y::T) where {T<:ULogarithmic}
 end
 
 function Base.:(+)(x::T, y::T) where {T<:Logarithmic}
-    if x.signbit==y.signbit
+    if x.signbit == y.signbit
         Logarithmic(x.abs + y.abs, x.signbit)
     elseif x.abs ≥ y.abs
         Logarithmic(x.abs - y.abs, x.signbit)
@@ -476,12 +484,21 @@ function Base.:(+)(x::T, y::T) where {T<:Logarithmic}
 end
 
 function Base.:(-)(x::T, y::T) where {T<:ULogarithmic}
-    if x.log == y.log
-        uexp(x.log + log1p(-exp(zero(y.log) - zero(x.log))))
-    elseif x.log ≥ y.log
-        uexp(x.log + log1p(-exp(y.log - x.log)))
-    else
+    if x.log < y.log
         throw(DomainError((x, y), "difference is negative"))
+    else
+        d = y.log - x.log
+        if isnan(d) && iszero(x) && iszero(y)
+            d = zero(y.log) - zero(x.log)
+        end
+        if d > 1
+            c = log1p(-exp(d))
+        else
+            # accurate when d is small
+            # e.g. exp(1e-100) - exp(-1e-100) ≈ exp(-229.56536)
+            c = log(-expm1(d))
+        end
+        uexp(x.log + c)
     end
 end
 

@@ -16,7 +16,7 @@ _prod(args...) = @inferred prod(args...)
 _sum(args...) = @inferred sum(args...)
 
 # sample values
-vals = (-Inf, -20, -20.0, -2, -2.0, -1, -1.0, -0.5, 0, 0.0, 0.5, 1, 1.0, 2, 2.0, 20, 20.0, Inf)
+vals = Any[-Inf, -20, -20.0, -2, -2.0, -1, -1.0, -0.5, 0, 0.0, 0.5, 1, 1.0, 2, 2.0, 20, 20.0, Inf, NaN]
 
 # sample vectors
 vecs = (
@@ -63,10 +63,10 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 				y = @inferred A(x)
 				@test y isa A
 				if A <: ULogarithmic
-					@test y.log ≈ log(x)
+					@test _approx(y.log, log(x))
 				else
-					@test y.abs.log ≈ log(abs(x))
-					@test y.signbit ≈ signbit(x)
+					@test _approx(y.abs.log, log(abs(x)))
+					@test _approx(y.signbit, signbit(x))
 				end
 			end
 		end
@@ -85,13 +85,13 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 			A <: ULogarithmic && x < 0 && continue
 			y = A(x)
 			@test _float(y) isa AbstractFloat
-			@test _float(y) ≈ Float32(x)
+			@test _approx(_float(y), x)
 			@test @inferred(AbstractFloat(y)) isa AbstractFloat
-			@test @inferred(AbstractFloat(y)) ≈ Float32(x)
+			@test _approx(@inferred(AbstractFloat(y)), x)
 			@test @inferred(Float64(y)) isa Float64
-			@test @inferred(Float64(y)) ≈ Float32(x)
+			@test _approx(@inferred(Float64(y)), x)
 			@test @inferred(Float32(y)) isa Float32
-			@test @inferred(Float32(y)) ≈ Float32(x)
+			@test _approx(@inferred(Float32(y)), x)
 		end
 	end
 
@@ -113,7 +113,7 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 			z = @inferred big(y)
 			B = A <: ULogarithmic ? ULogarithmic{BigFloat} : Logarithmic{BigFloat}
 			@test z isa B
-			@test _float(z) ≈ Float32(x)
+			@test _approx(_float(z), x)
 		end
 	end
 
@@ -255,7 +255,7 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 			for A in atypes, x in vals
 				A <: ULogarithmic && x < 0 && continue
 				y = A(x)
-				@test @inferred(sign(y)) == sign(y)
+				@test _float(@inferred(sign(y))) === float(sign(x))
 			end
 		end
 
@@ -263,7 +263,7 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 			for A in atypes, x in vals
 				A <: ULogarithmic && x < 0 && continue
 				y = A(x)
-				@test @inferred(signbit(y)) == signbit(y)
+				@test @inferred(signbit(y)) == signbit(x)
 			end
 		end
 
@@ -271,7 +271,7 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 			for A in atypes, x in vals
 				A <: ULogarithmic && x < 0 && continue
 				y = A(x)
-				@test float(@inferred(abs(y))) ≈ abs(x)
+				@test _approx(_float(@inferred(abs(y))), abs(x))
 			end
 		end
 
@@ -332,7 +332,7 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 		@testset "nextfloat" begin
 			for A in atypes, x in vals
 				x isa AbstractFloat || continue
-				@test @inferred(nextfloat(_exp(A, x))) == _exp(A, nextfloat(x))
+				@test @inferred(nextfloat(_exp(A, x))) === _exp(A, nextfloat(x))
 			end
 		end
 
@@ -340,9 +340,9 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 			for A in atypes, x in vals
 				x isa AbstractFloat || continue
 				if A <: Logarithmic && x == -Inf
-					@test @inferred(prevfloat(_exp(A, x))) == -_exp(A, nextfloat(-Inf))
+					@test @inferred(prevfloat(_exp(A, x))) === -_exp(A, nextfloat(-Inf))
 				else
-					@test @inferred(prevfloat(_exp(A, x))) == _exp(A, prevfloat(x))
+					@test @inferred(prevfloat(_exp(A, x))) === _exp(A, prevfloat(x))
 				end
 			end
 		end
@@ -354,14 +354,14 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 		@testset "pos" begin
 			for A in atypes, x in vals
 				A <: ULogarithmic && x < 0 && continue
-				@test float(+A(x)) ≈ float(x)
+				@test _approx(_float(+A(x)), float(x))
 			end
 		end
 
 		@testset "neg" begin
 			for A in atypes, x in vals
 				A <: ULogarithmic && x < 0 && continue
-				@test float(-A(x)) ≈ float(-x)
+				@test _approx(_float(-A(x)), float(-x))
 			end
 		end
 
@@ -370,6 +370,9 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 				A <: ULogarithmic && (x < 0 || y < 0) && continue
 				@test _approx(_float(_add(A(x), A(y))), x+y)
 			end
+			# check accuracy
+			# log(exp(1000) + exp(1001)) = 1000 + log(1 + exp(1))
+			@test _approx(log(exp(Logarithmic, 1000) + exp(Logarithmic, 1001)), 1001.313261)
 		end
 
 		@testset "sum" begin
@@ -396,6 +399,11 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 					@test _approx(_float(_sub(A(x), A(y))), x-y)
 				end
 			end
+			# check accuracy
+			# log(exp(1001) - exp(1000)) == 1000 + log(exp(1) - 1)
+			@test _approx(log(exp(Logarithmic, 1001) - exp(Logarithmic, 1000)), 1000.541324)
+			# log(exp(x) - exp(-x)) == x + log(1 - exp(-2x)) == x + log(-expm1(-2x))
+			@test _approx(log(exp(Logarithmic, 1e-100) - exp(Logarithmic, -1e-100)), -229.565362)
 		end
 
 		@testset "mul" begin
@@ -440,7 +448,7 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 				if x < 0
 					@test_throws DomainError _log(A(x))
 				else
-					@test _log(A(x)) ≈ log(x)
+					@test _approx(_log(A(x)), log(x))
 				end
 			end
 		end
@@ -448,7 +456,7 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 		@testset "exp" begin
 			for A in atypes, x in vals
 				A <: ULogarithmic && x < 0 && continue
-				@test float(exp(A(x))) ≈ exp(x)
+				@test _approx(_float(exp(A(x))), exp(x))
 			end
 		end
 
@@ -492,7 +500,7 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 				y = StatsFuns.normpdf(x)
 				y2 = StatsFuns.normpdf(A, x)
 				@test y2 isa A
-				@test float(y2) ≈ y
+				@test _approx(_float(y2), y)
 			end
 		end
 
@@ -503,7 +511,7 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 				y = Distributions.pdf(d, x)
 				y2 = Distributions.pdf(A, d, x)
 				@test y2 isa A
-				@test float(y2) ≈ y
+				@test _approx(_float(y2), y)
 			end
 		end
 
@@ -513,7 +521,7 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 				y = SpecialFunctions.gamma(x)
 				y2 = SpecialFunctions.gamma(A, x)
 				@test y2 isa A
-				@test float(y2) ≈ y
+				@test _approx(float(y2), y)
 			end
 		end
 
