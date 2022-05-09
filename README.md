@@ -5,8 +5,8 @@
 [![Test Status](https://github.com/cjdoris/LogarithmicNumbers.jl/workflows/Tests/badge.svg)](https://github.com/cjdoris/LogarithmicNumbers.jl/actions?query=workflow%3ATests)
 [![codecov](https://codecov.io/gh/cjdoris/LogarithmicNumbers.jl/branch/main/graph/badge.svg?token=AECCWGKRVJ)](https://codecov.io/gh/cjdoris/LogarithmicNumbers.jl)
 
-A [logarithmic number system](https://en.wikipedia.org/wiki/Logarithmic_number_system) for
-Julia.
+A [**logarithmic number system**](https://en.wikipedia.org/wiki/Logarithmic_number_system)
+for Julia.
 
 Provides the signed `Logarithmic` and unsigned `ULogarithmic` types for representing real
 numbers on a logarithmic scale.
@@ -55,19 +55,20 @@ julia> log(x)
 
 ### Constructors
 * `ULogarithmic(x)` and `Logarithmic(x)` represent the number `x`.
-* `exp(ULogarithmic, x)` represents `exp(x)`, and `x` can be huge.
+* `exp(ULogarithmic, logx)` represents `exp(logx)`, and `logx` can be huge. Use this when
+  you already know the logarithm `logx` of your number `x`.
 
 ### Functions in Base
-* Arithmetic: `+`, `-`, `*`, `/`, `^`, `inv`, `prod`, `sum`.
-* Ordering: `==`, `<`, `≤`, `cmp`, `isless`, `isequal`, `sign`, `signbit`, `abs`.
-* Logarithm: `log`, `log2`, `log10`, `log1p`.
-* Conversion: `float`, `unsigned`, `signed`, `widen`, `big`. These also operate on types.
-* Special values: `zero`, `one`, `typemin`, `typemax`.
-* Predicates: `iszero`, `isone`, `isinf`, `isfinite`, `isnan`.
-* IO: `show`, `write`, `read`.
-* Random: `rand(ULogarithmic)` is a random number in the unit interval.
-* Misc: `nextfloat`, `prevfloat`, `hash`.
-* Note: Any functions not mentioned here might be inaccurate.
+* **Arithmetic:** `+`, `-`, `*`, `/`, `^`, `inv`, `prod`, `sum`.
+* **Ordering:** `==`, `<`, `≤`, `cmp`, `isless`, `isequal`, `sign`, `signbit`, `abs`.
+* **Logarithm:** `log`, `log2`, `log10`, `log1p`. These are returned as the base (non-logarithmic) type.
+* **Conversion:** `float`, `unsigned`, `signed`, `widen`, `big`. These also operate on types.
+* **Special **values: `zero`, `one`, `typemin`, `typemax`.
+* **Predicates:** `iszero`, `isone`, `isinf`, `isfinite`, `isnan`.
+* **IO:** `show`, `write`, `read`.
+* **Random:** `rand(ULogarithmic)` is a random number in the unit interval.
+* **Misc:** `nextfloat`, `prevfloat`, `hash`.
+* **Note:** Any functions not mentioned here might be inaccurate.
 
 ### Interoperability with other packages
 
