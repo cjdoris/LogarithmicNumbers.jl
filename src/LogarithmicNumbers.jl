@@ -5,7 +5,7 @@ Provides the signed [`Logarithmic`](@ref) and unsigned [`ULogarithmic`](@ref) ty
 """
 module LogarithmicNumbers
 
-using Requires, Random
+using Random
 
 export ULogarithmic, ULogFloat16, ULogFloat32, ULogFloat64
 export Logarithmic, LogFloat16, LogFloat32, LogFloat64
