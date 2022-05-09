@@ -71,9 +71,10 @@ julia> log(x)
 
 ### Interoperability with other packages
 
-We overload some functions `f` so that `f(ULogarithmic, ...)` is the same as `f(...)` but
-the answer is returned as a `ULogarithmic`. Internally it calls an accurate log version of
-the function.
+It is natural to use this package in conjunction with other packages which return
+logarithms. The general pattern is that you can use `exp(ULogarithmic, logfunc(args...))`
+instead of `func(args...)` to get the answer as a logarithmic number. Here are some
+possibilities for `func`:
 
 - [StatsFuns.jl](https://github.com/JuliaStats/StatsFuns.jl):
   `normpdf`, `normcdf`, `normccdf`, plus equivalents for other distributions.

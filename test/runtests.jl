@@ -1,4 +1,4 @@
-using Distributions, LogarithmicNumbers, Test, SpecialFunctions, StatsFuns
+using LogarithmicNumbers, Test
 
 function _approx(x,y)
     ans = isapprox(x, y, atol=1e-3) || (isnan(x) && isnan(y))
@@ -546,41 +546,6 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
                 seekstart(io)
                 z = read(io, typeof(y))
                 @test y === z
-            end
-        end
-
-    end
-
-    @testset "overloads" begin
-
-        @testset "StatsFuns.jl" begin
-            for A in atypes
-                x = 1.0
-                y = StatsFuns.normpdf(x)
-                y2 = StatsFuns.normpdf(A, x)
-                @test y2 isa A
-                @test _approx(_float(y2), y)
-            end
-        end
-
-        @testset "Distributions.jl" begin
-            for A in atypes
-                d = Normal()
-                x = 1.0
-                y = Distributions.pdf(d, x)
-                y2 = Distributions.pdf(A, d, x)
-                @test y2 isa A
-                @test _approx(_float(y2), y)
-            end
-        end
-
-        @testset "SpecialFunctions.jl" begin
-            for A in atypes
-                x = 10.0
-                y = SpecialFunctions.gamma(x)
-                y2 = SpecialFunctions.gamma(A, x)
-                @test y2 isa A
-                @test _approx(float(y2), y)
             end
         end
 
