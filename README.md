@@ -63,7 +63,7 @@ julia> log(x)
 * **Ordering:** `==`, `<`, `≤`, `cmp`, `isless`, `isequal`, `sign`, `signbit`, `abs`.
 * **Logarithm:** `log`, `log2`, `log10`, `log1p`. These are returned as the base (non-logarithmic) type.
 * **Conversion:** `float`, `unsigned`, `signed`, `widen`, `big`. These also operate on types.
-* **Special **values: `zero`, `one`, `typemin`, `typemax`.
+* **Special values:** `zero`, `one`, `typemin`, `typemax`.
 * **Predicates:** `iszero`, `isone`, `isinf`, `isfinite`, `isnan`.
 * **IO:** `show`, `write`, `read`.
 * **Random:** `rand(ULogarithmic)` is a random number in the unit interval.
