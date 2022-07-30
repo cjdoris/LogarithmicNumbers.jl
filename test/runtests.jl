@@ -102,13 +102,19 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
     end
 
     @testset "promote" begin
-        for A1 in atypes, A2 in atypes, T1 in (nothing, Int, Float64), T2 in (nothing, Int, Float64)
+        for A1 in atypes, A2 in atypes, T1 in (nothing, Int16, Int32, Float32, Float64, BigFloat), T2 in (nothing, Int16, Float32, BigFloat)
             A3 = A1 <: Logarithmic || A2 <: Logarithmic ? Logarithmic : ULogarithmic
             T3 = T1 === nothing ? T2 === nothing ? nothing : T2 : T2 === nothing ? T1 : promote_type(T1, T2)
             B1 = T1 === nothing ? A1 : A1{T1}
             B2 = T2 === nothing ? A2 : A2{T2}
             B3 = T3 === nothing ? A3 : A3{T3}
-            @test promote_type(A1, A2) == A3
+            @test promote_type(B1, B2) == B3
+        end
+        for A1 in atypes, T1 in (nothing, Int16, Int32, Float32, Float64, BigFloat), T2 in (Int16, Float32, BigFloat)
+            T3 = float(T2)
+            B1 = T1 === nothing ? A1 : A1{T1}
+            B3 = Logarithmic{T1 === nothing ? T3 : promote_type(T1, T3)}
+            @test promote_type(B1, T2) == B3
         end
     end
 

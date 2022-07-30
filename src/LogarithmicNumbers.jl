@@ -456,6 +456,11 @@ end
     promote_type(T, R2)
 end
 
+# override the default promote_rule(BigFloat, <:Real) -> BigFloat
+# which contradicts promote_rule(Logarithmic{BigFloat}, BigFloat) -> Logarithmic{BigFloat}
+# and causes a stack overflow
+Base.promote_rule(::Type{BigFloat}, ::Type{T}) where {T<:AnyLogarithmic} = promote_rule(ULogarithmic{BigFloat}, T)
+
 ### Arithmetic
 
 Base.:(+)(x::AnyLogarithmic) = x
