@@ -222,7 +222,7 @@ function Base.one(::Type{Logarithmic{T}}) where {T}
     Logarithmic(one(ULogarithmic{T}))
 end
 
-function Base.one(::Type{Logarithmic}) where {T}
+function Base.one(::Type{Logarithmic})
     Logarithmic(one(ULogarithmic))
 end
 
@@ -530,7 +530,11 @@ function Base.:(/)(x::T, y::T) where {T<:Logarithmic}
     Logarithmic(x.abs / y.abs, x.signbit ⊻ y.signbit)
 end
 
-function Base.:(^)(x::ULogarithmic, n::Real)
+Base.:(^)(x::ULogarithmic, n::Real) = _pow(x, n)
+Base.:(^)(x::ULogarithmic, n::Rational) = _pow(x, n)
+Base.:(^)(x::ULogarithmic, n::Integer) = _pow(x, n)
+
+function _pow(x::ULogarithmic, n::Real)
     if n == 0
         uexp(zero(x.log) * n)
     else
@@ -538,19 +542,15 @@ function Base.:(^)(x::ULogarithmic, n::Real)
     end
 end
 
-function Base.:(^)(x::ULogarithmic, n::Integer)
-    if n == 0
-        uexp(zero(x.log) * n)
-    else
-        uexp(x.log * n)
-    end
-end
+Base.:(^)(x::Logarithmic, n::Real) = _pow(x, n)
+Base.:(^)(x::Logarithmic, n::Rational) = _pow(x, n)
+Base.:(^)(x::Logarithmic, n::Integer) = _pow(x, n)
 
-function Base.:(^)(x::Logarithmic, n::Integer)
+function _pow(x::Logarithmic, n::Integer)
     Logarithmic(x.abs^n, x.signbit & isodd(n))
 end
 
-function Base.:(^)(x::Logarithmic, n::Real)
+function _pow(x::Logarithmic, n::Real)
     x.signbit && !iszero(x) && throw(DomainError(x))
     Logarithmic(x.abs^n)
 end

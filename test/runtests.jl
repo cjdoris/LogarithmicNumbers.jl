@@ -1,4 +1,6 @@
-using LogarithmicNumbers, Test
+using LogarithmicNumbers, Test, Aqua
+
+Aqua.test_all(LogarithmicNumbers)
 
 function _approx(x,y)
     ans = isapprox(x, y, atol=1e-3) || (isnan(x) && isnan(y))
