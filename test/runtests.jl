@@ -305,6 +305,16 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
             end
         end
 
+        @testset "isapprox" begin
+            for A in atypes, x1 in vals
+                A <: ULogarithmic && x1 < 0 && continue
+                x2 = x1 + 1e-12
+                y1 = A(x1)
+                y2 = A(x2)
+                @test @inferred(isapprox(y1, y2)) == @inferred(isapprox(y2, y1)) == isinf(y1)
+            end
+        end
+
         @testset "<" begin
             for A in atypes, x1 in vals, x2 in vals
                 A <: ULogarithmic && (x1 < 0 || x2 < 0) && continue
