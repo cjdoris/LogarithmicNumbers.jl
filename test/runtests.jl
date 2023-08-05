@@ -311,7 +311,7 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
                 x2 = x1 + 1e-12
                 y1 = A(x1)
                 y2 = A(x2)
-                @test @inferred(isapprox(y1, y2)) == @inferred(isapprox(y2, y1)) == isinf(y1)
+                @test @inferred(isapprox(y1, y2; atol=1e-11)) == isapprox(x1,x2; atol=1e-11)
             end
         end
 
