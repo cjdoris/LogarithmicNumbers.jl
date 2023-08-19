@@ -328,6 +328,10 @@ function Base.isequal(x::Logarithmic, y::Logarithmic)
     isequal(x.abs, y.abs) && isequal(x.signbit, y.signbit)
 end
 
+function Base.isapprox(x::ULogarithmic, y::ULogarithmic; kwargs...)
+    isapprox(Logarithmic(x), Logarithmic(y); kwargs...)
+end
+
 function Base.:(<)(x::ULogarithmic, y::ULogarithmic)
     x.log < y.log
 end
