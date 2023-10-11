@@ -9,12 +9,12 @@ h1(x) = log(exp(Logarithmic, x) * x)
 h2(x) = log(exp(LogFloat64, x) * x)
 
 x = 1000
-logder = log(1 + inv(x)) 
+d = 1 + inv(x)
 
-@test isnan(log(derivative(f, x)))
-@test log(derivative(f, LogFloat64(x))) ≈ logder
-@test log(derivative(f, ULogFloat64(x))) ≈ logder
-@test log(derivative(g1, x)) ≈ logder
-@test log(derivative(g2, x)) ≈ logder
-@test log(derivative(h1, x)) ≈ logder
-@test log(derivative(h2, x)) ≈ logder
+@test isnan(derivative(f, x))
+@test derivative(f, LogFloat64(x)) ≈ d
+@test derivative(f, ULogFloat64(x)) ≈ d
+@test derivative(g1, x) ≈ d
+@test derivative(g2, x) ≈ d
+@test derivative(h1, x) ≈ d
+@test derivative(h2, x) ≈ d
