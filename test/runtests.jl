@@ -569,4 +569,7 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 
     end
 
+    @testset "ForwardDiff" begin
+        include("forwarddiff.jl")
+    end
 end
