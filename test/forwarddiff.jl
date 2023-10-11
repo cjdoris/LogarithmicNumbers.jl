@@ -2,15 +2,19 @@ using ForwardDiff: derivative, gradient
 using LogarithmicNumbers
 using Test
 
-f(x) = exp(x + 1)
-g1(x) = exp(Logarithmic, x + 1)
-g2(x) = exp(LogFloat64, x + 1)
-h1(x) = exp(ULogarithmic, x + 1)
-h2(x) = exp(ULogFloat64, x + 1)
+f(x) = log(exp(x) * x)
+g1(x) = log(exp(ULogarithmic, x) * x)
+g2(x) = log(exp(ULogFloat64, x) * x)
+h1(x) = log(exp(Logarithmic, x) * x)
+h2(x) = log(exp(LogFloat64, x) * x)
 
-@test log(derivative(f, LogFloat64(1000.0))) ≈ log(exp(Logarithmic, 1001.0))
-@test log(derivative(f, ULogFloat64(1000.0))) ≈ log(exp(Logarithmic, 1001.0))
-@test derivative(g1, 1000.0) ≈ exp(Logarithmic, 1001.0)
-@test derivative(g2, 1000.0) ≈ exp(Logarithmic, 1001.0)
-@test derivative(h1, 1000.0) ≈ exp(ULogarithmic, 1001.0)
-@test derivative(h2, 1000.0) ≈ exp(ULogarithmic, 1001.0)
+x = 1000
+logder = log(1 + inv(x)) 
+
+@test isnan(log(derivative(f, x)))
+@test log(derivative(f, LogFloat64(x))) ≈ logder
+@test log(derivative(f, ULogFloat64(x))) ≈ logder
+@test log(derivative(g1, x)) ≈ logder
+@test log(derivative(g2, x)) ≈ logder
+@test log(derivative(h1, x)) ≈ logder
+@test log(derivative(h2, x)) ≈ logder
