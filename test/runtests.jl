@@ -570,6 +570,8 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
     end
 
     @testset "ForwardDiff" begin
-        include("forwarddiff.jl")
+        if VERSION >= v"1.9"
+            include("forwarddiff.jl")
+        end
     end
 end

@@ -86,7 +86,7 @@ possibilities for `func`:
 
 ## Autodiff
 
-If you load [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl), you should be able to compute
+On Julia >= 1.9, if you load [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl), you should be allowed to compute
 
 - derivatives of functions involving `exp(Logarithmic, x)`
 - derivatives of functions evaluated at `Logarithmic(x)`
