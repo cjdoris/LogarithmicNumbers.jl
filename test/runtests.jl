@@ -37,8 +37,8 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 
 @testset verbose=true "LogarithmicNumbers" begin
 
-    @testset "Aqua" begin
-        Aqua.test_all(LogarithmicNumbers, project_toml_formatting=VERSION>v"1.6")
+    @testset verbose=true "Aqua" begin
+        Aqua.test_all(LogarithmicNumbers, project_toml_formatting=(VERSION >= v"1.7"))
     end
 
     @testset "types" begin
