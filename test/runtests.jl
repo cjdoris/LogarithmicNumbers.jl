@@ -1,7 +1,5 @@
 using LogarithmicNumbers, Test, Aqua
 
-Aqua.test_all(LogarithmicNumbers)
-
 function _approx(x,y)
     ans = isapprox(x, y, atol=1e-3) || (isnan(x) && isnan(y))
     ans || @show x y
@@ -37,7 +35,11 @@ Int[x for x in vals if x isa Int && x ≥ 0],
 atypes = (ULogarithmic, Logarithmic)
 atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 
-@testset "LogarithmicNumbers" begin
+@testset verbose=true "LogarithmicNumbers" begin
+
+    @testset "Aqua" begin
+        Aqua.test_all(LogarithmicNumbers, project_toml_formatting=VERSION>v"1.6")
+    end
 
     @testset "types" begin
         @test @isdefined ULogarithmic
