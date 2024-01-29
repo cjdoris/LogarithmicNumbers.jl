@@ -605,6 +605,10 @@ function Base.exp(x::Logarithmic)
     x.signbit ? inv(exp(x.abs)) : exp(x.abs)
 end
 
+function Base.sqrt(x::AnyLogarithmic)
+    uexp(x.log/2)
+end
+
 ### Hash
 
 const _HASH = hash(ULogarithmic)
