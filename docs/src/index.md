@@ -8,7 +8,7 @@ Provides the [`ULogarithmic`](@ref) and [`Logarithmic`](@ref) subtypes of `Real`
 
 * `ULogarithmic(x)` and `Logarithmic(x)` represent the number `x`.
 * `exp(ULogarithmic, x)` and `exp(Logarithmic, x)` represent `exp(x)` (and `x` can be huge).
-* Arithmetic: plus, minus, times, divide, power, `inv`, `log`, `prod`, `sum`.
+* Arithmetic: plus, minus, times, divide, power, `sqrt`, `inv`, `log`, `prod`, `sum`.
 * Comparisons: equality and ordering.
 * Random: `rand(ULogarithmic)` and `rand(Logarithmic)` produces a random number in the unit interval.
 * Other functions: `float`, `big`, `unsigned` (converts `ULogarithmic` to `Logarithmic`), `signed` (vice versa), `widen`, `typemin`, `typemax`, `zero`, `one`, `iszero`, `isone`, `isinf`, `isfinite`, `isnan`, `sign`, `signbit`, `abs`, `nextfloat`, `prevfloat`, `write`, `read`.
