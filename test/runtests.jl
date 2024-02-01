@@ -14,6 +14,7 @@ _sub(args...) = @inferred -(args...)
 _mul(args...) = @inferred *(args...)
 _div(args...) = @inferred /(args...)
 _pow(args...) = @inferred ^(args...)
+_sqrt(args...) = @inferred sqrt(args...)
 _float(args...) = @inferred float(args...)
 _inv(args...) = @inferred inv(args...)
 _prod(args...) = @inferred prod(args...)
@@ -455,6 +456,13 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
             for A in atypes, x in vals, n in (-2,-1,0,1,2,-1.1,0.0,2.3)
                 x < 0 && continue
                 @test _approx(_float(_pow(A(x), n)), float(x)^n)
+            end
+        end
+        
+        @testset "sqrt" begin
+            for A in atypes, x in vals
+                x < 0 && continue
+                @test _approx(_float(_sqrt(A(x))), sqrt(float(x)))
             end
         end
 
