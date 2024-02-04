@@ -83,11 +83,9 @@ possibilities for `func`:
 - [SpecialFunctions.jl](https://github.com/JuliaMath/SpecialFunctions.jl):
   `gamma`, `factorial`, `beta`, `erfc`, `erfcx`.
 
-### Autodiff
+#### ForwardDiff.jl
 
-On Julia >= 1.9, if you load [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl), you should be allowed to compute
+On Julia 1.9+, if you load [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl), you should be allowed to compute
 
 - derivatives of functions involving `exp(Logarithmic, x)`
 - derivatives of functions evaluated at `Logarithmic(x)`
-
-This functionality is experimental, please report any bug or unexpected behavior.
