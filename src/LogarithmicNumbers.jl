@@ -605,8 +605,39 @@ function Base.exp(x::Logarithmic)
     x.signbit ? inv(exp(x.abs)) : exp(x.abs)
 end
 
-function Base.sqrt(x::AnyLogarithmic)
-    uexp(x.log/2)
+function Base.sqrt(x::ULogarithmic)
+    uexp(x.log / oftype(x.log, 2))
+end
+
+function Base.sqrt(x::Logarithmic)
+    if !x.signbit || iszero(x)
+        Logarithmic(sqrt(x.abs))
+    else
+        throw(DomainError(x))
+    end
+end
+
+function Base.cbrt(x::ULogarithmic)
+    uexp(x.log / oftype(x.log, 3))
+end
+
+function Base.cbrt(x::Logarithmic)
+    Logarithmic(cbrt(x.abs), x.signbit)
+end
+
+if hasproperty(Base, :fourthroot)
+    # fourthroot was introduced in julia 1.10
+    function Base.fourthroot(x::ULogarithmic)
+        uexp(x.log / oftype(x.log, 4))
+    end
+
+    function Base.fourthroot(x::Logarithmic)
+        if !x.signbit || iszero(x)
+            Logarithmic(fourthroot(x.abs))
+        else
+            throw(DomainError(x))
+        end
+    end
 end
 
 ### Hash

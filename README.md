@@ -44,7 +44,7 @@ julia> log(x)
 999.8545865421312
 ```
 
-## Documentation
+## Features
 
 ### Exported types
 * `ULogarithmic{T}` represents a non-negative real number by its logarithm of type `T`.
@@ -59,7 +59,7 @@ julia> log(x)
   you already know the logarithm `logx` of your number `x`.
 
 ### Functions in Base
-* **Arithmetic:** `+`, `-`, `*`, `/`, `^`, `inv`, `prod`, `sum`.
+* **Arithmetic:** `+`, `-`, `*`, `/`, `^`, `inv`, `prod`, `sum`, `sqrt`, `cbrt`, `fourthroot`.
 * **Ordering:** `==`, `<`, `≤`, `cmp`, `isless`, `isequal`, `sign`, `signbit`, `abs`.
 * **Logarithm:** `log`, `log2`, `log10`, `log1p`. These are returned as the base (non-logarithmic) type.
 * **Conversion:** `float`, `unsigned`, `signed`, `widen`, `big`. These also operate on types.
@@ -84,7 +84,7 @@ possibilities for `func`:
 - [SpecialFunctions.jl](https://github.com/JuliaMath/SpecialFunctions.jl):
   `gamma`, `factorial`, `beta`, `erfc`, `erfcx`.
 
-## Autodiff
+### Autodiff
 
 On Julia >= 1.9, if you load [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl), you should be allowed to compute
 

@@ -15,6 +15,8 @@ _mul(args...) = @inferred *(args...)
 _div(args...) = @inferred /(args...)
 _pow(args...) = @inferred ^(args...)
 _sqrt(args...) = @inferred sqrt(args...)
+_cbrt(args...) = @inferred cbrt(args...)
+_fourthroot(args...) = @inferred fourthroot(args...)
 _float(args...) = @inferred float(args...)
 _inv(args...) = @inferred inv(args...)
 _prod(args...) = @inferred prod(args...)
@@ -39,7 +41,7 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
 @testset verbose=true "LogarithmicNumbers" begin
 
     @testset verbose=true "Aqua" begin
-        Aqua.test_all(LogarithmicNumbers, project_toml_formatting=(VERSION >= v"1.7"))
+        Aqua.test_all(LogarithmicNumbers)
     end
 
     @testset "types" begin
@@ -461,8 +463,32 @@ atypes2 = (ULogarithmic, ULogFloat32, Logarithmic, LogFloat32)
         
         @testset "sqrt" begin
             for A in atypes, x in vals
-                x < 0 && continue
-                @test _approx(_float(_sqrt(A(x))), sqrt(float(x)))
+                if x < 0
+                    A <: ULogarithmic && continue
+                    @test_throws DomainError _sqrt(A(x))
+                else
+                    @test _approx(_float(_sqrt(A(x))), sqrt(float(x)))
+                end
+            end
+        end
+
+        @testset "cbrt" begin
+            for A in atypes, x in vals
+                x < 0 && A <: ULogarithmic && continue
+                @test _approx(_float(_cbrt(A(x))), cbrt(float(x)))
+            end
+        end
+
+        @testset "fourthroot" begin
+            if hasproperty(Base, :fourthroot)
+                for A in atypes, x in vals
+                    if x < 0
+                        A <: ULogarithmic && continue
+                        @test_throws DomainError _fourthroot(A(x))
+                    else
+                        @test _approx(_float(_fourthroot(A(x))), fourthroot(float(x)))
+                    end
+                end
             end
         end
 
