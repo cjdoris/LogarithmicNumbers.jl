@@ -1,7 +1,6 @@
 # LogarithmicNumbers.jl
 
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
-[![Stable Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://docs.juliahub.com/LogarithmicNumbers)
 [![Test Status](https://github.com/cjdoris/LogarithmicNumbers.jl/workflows/Tests/badge.svg)](https://github.com/cjdoris/LogarithmicNumbers.jl/actions?query=workflow%3ATests)
 [![codecov](https://codecov.io/gh/cjdoris/LogarithmicNumbers.jl/branch/main/graph/badge.svg?token=AECCWGKRVJ)](https://codecov.io/gh/cjdoris/LogarithmicNumbers.jl)
 
@@ -44,7 +43,7 @@ julia> log(x)
 999.8545865421312
 ```
 
-## Features
+## Documentation
 
 ### Exported types
 * `ULogarithmic{T}` represents a non-negative real number by its logarithm of type `T`.
