@@ -13,10 +13,10 @@ ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 LogarithmicNumbersForwardDiffExt = "ForwardDiff"
 
 [compat]
-Aqua = "0.8"
+Aqua = "0 - 999"
 ForwardDiff = "0.10, 1"
 Random = "1"
-Test = "1"
+Test = "0 - 999"
 julia = "1.6"
 
 [extras]
